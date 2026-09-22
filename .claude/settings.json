@@ -1,0 +1,45 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(*)",
+      "Read(*)",
+      "Write(*)",
+      "Edit(*)",
+      "MultiEdit(*)",
+      "Glob(*)",
+      "Grep(*)",
+      "WebFetch(*)",
+      "WebSearch(*)",
+      "TodoRead(*)",
+      "TodoWrite(*)",
+      "NotebookRead(*)",
+      "NotebookEdit(*)",
+      "Task(*)",
+      "mcp__*"
+    ]
+  },
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write|MultiEdit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "cd \"$(dirname '$CLAUDE_TOOL_RESULT_FILE_PATH' 2>/dev/null || echo '.')\" && npx tsc --noEmit 2>&1 | tail -20 || true"
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "matcher": ".*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "echo 'Claude session ended. Remember to verify: npm run build passes before committing.'"
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -1,0 +1,100 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+html {
+  /* Landscape rotation on iOS otherwise inflates every font. */
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+body {
+  @apply bg-slate-100 text-slate-800 antialiased;
+  /* Nothing in the app is meant to scroll sideways at the page level — any
+     overflow is a bug, and clipping it here keeps a stray wide cell from
+     letting the whole layout slide around under a thumb. */
+  overflow-x: hidden;
+  /* Grey flash on every tap makes the app feel like a web page, not an app. */
+  -webkit-tap-highlight-color: transparent;
+}
+
+.dark body {
+  @apply bg-slate-950 text-slate-100;
+}
+
+/* Let the browser theme native form controls, scrollbars & date pickers. */
+.dark {
+  color-scheme: dark;
+}
+
+/* Smoothly ease surfaces between light & dark. */
+body,
+.dark body {
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+/* ---------------------------------------------------------------------------
+ * Mobile form controls
+ *
+ * iOS Safari auto-zooms the whole page whenever a focused control's font is
+ * under 16px — and it never zooms back out. This CRM is wall-to-wall inline
+ * inputs and selects at text-xs/text-sm, so without this every tap on a remark
+ * box or status dropdown left the user pinching back to readable. Forcing 16px
+ * below the md breakpoint costs nothing: the dense desktop table is `hidden` at
+ * this width, so only card/modal/filter controls are affected — and those want
+ * the bigger text anyway.
+ * ------------------------------------------------------------------------- */
+@media (max-width: 767px) {
+  input:not([type='checkbox']):not([type='radio']),
+  select,
+  textarea {
+    font-size: 16px !important;
+  }
+}
+
+@layer utilities {
+  /* Comfortable minimum tap area (Apple 44pt / Material 48dp) applied only on
+     touch pointers, so the desktop UI keeps its dense icon buttons. */
+  @media (pointer: coarse) {
+    .tap {
+      min-height: 44px;
+      min-width: 44px;
+    }
+  }
+
+  /* Horizontal chip/tab strips: swipeable, without a scrollbar eating a row. */
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* Momentum scrolling that doesn't chain to the page behind a sheet. */
+  .overscroll-none-y {
+    overscroll-behavior-y: contain;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* Safe-area helpers for the fixed bottom nav / call bar / sheet footers. */
+  .pb-safe {
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+  .mb-safe {
+    margin-bottom: env(safe-area-inset-bottom, 0px);
+  }
+  .bottom-safe {
+    bottom: env(safe-area-inset-bottom, 0px);
+  }
+  /* Page bottom padding that clears the mobile tab bar + the home indicator. */
+  .pb-navbar {
+    padding-bottom: calc(4.25rem + env(safe-area-inset-bottom, 0px));
+  }
+}
