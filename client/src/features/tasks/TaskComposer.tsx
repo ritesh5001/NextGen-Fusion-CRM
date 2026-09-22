@@ -79,7 +79,7 @@ export function TaskComposer() {
   }
 
   const cell =
-    'rounded-md border border-slate-300 bg-white px-2 py-1.5 text-sm text-slate-700 outline-none transition-colors focus:border-brand-500 focus:ring-2 focus:ring-brand-100 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200 dark:focus:ring-brand-500/25';
+    'rounded-md border border-gray-300 bg-white px-2 py-1.5 text-sm text-gray-700 outline-none transition-colors focus:border-brand-500 focus:ring-2 focus:ring-brand-100 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-200 dark:focus:ring-brand-500/25';
   const cellTouch = `${cell} min-h-11 w-full md:min-h-0`;
 
   const chips = assignees.length > 0 && (
@@ -125,7 +125,7 @@ export function TaskComposer() {
             setOpen(true);
             setTimeout(() => titleRef.current?.focus(), 50);
           }}
-          className="flex min-h-11 w-full items-center justify-center gap-2 rounded-xl border border-dashed border-slate-300 bg-white text-sm font-medium text-slate-500 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-400"
+          className="flex min-h-11 w-full items-center justify-center gap-2 rounded-xl border border-dashed border-gray-300 bg-white text-sm font-medium text-gray-500 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-400"
         >
           <Plus size={16} /> Assign a task
         </button>
@@ -133,16 +133,16 @@ export function TaskComposer() {
     }
 
     return (
-      <div className="space-y-2 rounded-xl border border-slate-200 bg-white p-3 dark:border-slate-800 dark:bg-slate-900">
+      <div className="space-y-2 rounded-xl border border-gray-200 bg-white p-3 dark:border-gray-800 dark:bg-gray-900">
         <div className="flex items-center justify-between">
-          <span className="text-sm font-semibold text-slate-700 dark:text-slate-200">New task</span>
+          <span className="text-sm font-semibold text-gray-700 dark:text-gray-200">New task</span>
           <button
             onClick={() => {
               reset();
               setOpen(false);
             }}
             aria-label="Cancel"
-            className="tap -mr-2 flex items-center justify-center rounded-lg p-2 text-slate-400"
+            className="tap -mr-2 flex items-center justify-center rounded-lg p-2 text-gray-400"
           >
             <X size={18} />
           </button>
@@ -215,7 +215,7 @@ export function TaskComposer() {
         <button
           onClick={submit}
           disabled={create.isPending}
-          className="min-h-11 w-full rounded-lg bg-brand-600 px-3.5 text-sm font-medium text-white transition-colors hover:bg-brand-700 disabled:cursor-not-allowed disabled:opacity-60"
+          className="min-h-11 w-full rounded-btn bg-gray-950 px-3.5 text-sm font-medium text-white transition-colors hover:bg-gray-800 dark:bg-white dark:text-gray-950 dark:hover:bg-gray-200 disabled:cursor-not-allowed disabled:opacity-60"
         >
           {create.isPending ? 'Assigning…' : assignees.length > 1 ? `Assign to ${assignees.length} people` : 'Assign'}
         </button>
@@ -225,9 +225,9 @@ export function TaskComposer() {
 
   /* ------------------------------ desktop bar ----------------------------- */
   return (
-    <div className="rounded-xl border border-slate-200 bg-white p-2.5 dark:border-slate-800 dark:bg-slate-900">
+    <div className="rounded-xl border border-gray-200 bg-white p-2.5 dark:border-gray-800 dark:bg-gray-900">
       <div className="flex flex-wrap items-center gap-2">
-        <Plus size={16} className="ml-1 shrink-0 text-slate-400" aria-hidden />
+        <Plus size={16} className="ml-1 shrink-0 text-gray-400" aria-hidden />
 
         <input
           ref={titleRef}
@@ -236,7 +236,7 @@ export function TaskComposer() {
           onChange={(e) => setTitle(e.target.value)}
           onKeyDown={(e) => e.key === 'Enter' && submit()}
           placeholder="What needs doing? Type it here, pick who, press Enter"
-          className={`${cell} min-w-56 flex-1 border-transparent bg-transparent text-[15px] placeholder:text-slate-400 focus:border-brand-500 dark:border-transparent dark:bg-transparent`}
+          className={`${cell} min-w-56 flex-1 border-transparent bg-transparent text-[15px] placeholder:text-gray-400 focus:border-brand-500 dark:border-transparent dark:bg-transparent`}
         />
 
         {/* Native picker; each choice becomes a chip, so one task can go to many. */}
@@ -293,7 +293,7 @@ export function TaskComposer() {
         <button
           onClick={submit}
           disabled={create.isPending}
-          className="shrink-0 rounded-md bg-brand-600 px-3.5 py-2 text-sm font-medium text-white transition-colors hover:bg-brand-700 disabled:cursor-not-allowed disabled:opacity-60"
+          className="shrink-0 rounded-btn bg-gray-950 px-3.5 py-2 text-sm font-medium text-white transition-colors hover:bg-gray-800 dark:bg-white dark:text-gray-950 dark:hover:bg-gray-200 disabled:cursor-not-allowed disabled:opacity-60"
         >
           {create.isPending ? 'Assigning…' : assignees.length > 1 ? `Assign to ${assignees.length}` : 'Assign'}
         </button>

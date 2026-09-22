@@ -119,10 +119,10 @@ function FollowUpCell({ lead }: { lead: Lead }) {
             { onSuccess: () => toast.success('Follow-up scheduled'), onError: (err) => toast.error(apiError(err)) }
           )
         }
-        className="w-full rounded-lg border border-slate-300 px-2 py-1 text-xs outline-none focus:border-brand-500 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-100 dark:placeholder:text-slate-500"
+        className="w-full rounded-lg border border-gray-300 px-2 py-1 text-xs outline-none focus:border-brand-500 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100 dark:placeholder:text-gray-500"
       />
       {lead.nextFollowUpAt && (
-        <p className="text-[11px] text-slate-400 dark:text-slate-500">Next: {fmtDate(lead.nextFollowUpAt)}</p>
+        <p className="text-[11px] text-gray-400 dark:text-gray-500">Next: {fmtDate(lead.nextFollowUpAt)}</p>
       )}
     </div>
   );
@@ -138,7 +138,7 @@ function PhoneActions({ phone, lead, slot = 'phone1', big }: { phone: string; le
   const size = big ? 18 : 15;
   // `big` is the phone layout: real 44px targets, not 28px desktop icon buttons.
   const cls = big
-    ? 'tap flex items-center justify-center rounded-xl border border-slate-200 p-2.5 dark:border-slate-700'
+    ? 'tap flex items-center justify-center rounded-xl border border-gray-200 p-2.5 dark:border-gray-700'
     : 'rounded p-1.5';
   const { config: callConfig, ready: callingEnabled, provider: callProvider } = useCallProvider();
   // "Configured but no number/agent assigned to you" — a gap an admin can fix.
@@ -194,12 +194,12 @@ function PhoneActions({ phone, lead, slot = 'phone1', big }: { phone: string; le
           onChange={(e) => setVal(e.target.value)}
           onKeyDown={(e) => e.key === 'Enter' && saveNumber()}
           placeholder="+countrycode number"
-          className="min-w-0 flex-1 rounded-lg border border-slate-300 px-2 py-1 text-xs outline-none focus:border-brand-500 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-100 md:w-36 md:flex-none"
+          className="min-w-0 flex-1 rounded-lg border border-gray-300 px-2 py-1 text-xs outline-none focus:border-brand-500 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100 md:w-36 md:flex-none"
         />
         <button onClick={saveNumber} disabled={updateLead.isPending} title="Save" className={`${cls} text-emerald-600 hover:bg-emerald-50`}>
           <Check size={size} />
         </button>
-        <button onClick={() => { setEditing(false); setVal(phone); }} title="Cancel" className={`${cls} text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-700`}>
+        <button onClick={() => { setEditing(false); setVal(phone); }} title="Cancel" className={`${cls} text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-700`}>
           <X size={size} />
         </button>
       </div>
@@ -214,7 +214,7 @@ function PhoneActions({ phone, lead, slot = 'phone1', big }: { phone: string; le
       <button
         onClick={() => copyPhone(phone)}
         title="Copy number"
-        className={`${cls} text-slate-500 hover:bg-slate-100 dark:text-slate-400 dark:hover:bg-slate-700`}
+        className={`${cls} text-gray-500 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-700`}
       >
         <Copy size={size} />
       </button>
@@ -248,7 +248,7 @@ function PhoneActions({ phone, lead, slot = 'phone1', big }: { phone: string; le
         <button
           onClick={() => { setVal(phone); setEditing(true); }}
           title="Edit number"
-          className={`${cls} text-slate-500 hover:bg-slate-100 dark:text-slate-400 dark:hover:bg-slate-700`}
+          className={`${cls} text-gray-500 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-700`}
         >
           <Pencil size={size} />
         </button>
@@ -276,12 +276,12 @@ function phoneSlotOf(lead: Lead, phone: PhoneSlot) {
 function PhoneNumberCell({ lead, phone }: { lead: Lead; phone: PhoneSlot }) {
   const num = phoneNumberOf(lead, phone);
   const showNumbers = useUiStore((s) => s.showPhoneNumbers);
-  if (!num) return <span className="text-slate-300">—</span>;
+  if (!num) return <span className="text-gray-300">—</span>;
   const pretty = formatPhoneDisplay(num, lead.country);
   return (
     <div className="space-y-0.5">
       {showNumbers && (
-        <span className="block truncate text-xs font-medium text-slate-700 dark:text-slate-200" title={pretty}>
+        <span className="block truncate text-xs font-medium text-gray-700 dark:text-gray-200" title={pretty}>
           {pretty}
         </span>
       )}
@@ -296,7 +296,7 @@ function CallStatusCell({ lead, phone }: { lead: Lead; phone: PhoneSlot }) {
   const num = phoneNumberOf(lead, phone);
   const slot = phoneSlotOf(lead, phone);
   const value = (slot?.callStatus ?? 'pending') as PhoneCallStatus;
-  if (phone !== 'phone1' && !num) return <span className="text-slate-300">—</span>;
+  if (phone !== 'phone1' && !num) return <span className="text-gray-300">—</span>;
   return (
     <div className="space-y-0.5">
       <select
@@ -308,7 +308,7 @@ function CallStatusCell({ lead, phone }: { lead: Lead; phone: PhoneSlot }) {
             { onError: (err) => toast.error(apiError(err)) }
           )
         }
-        className={`w-full rounded-lg border border-slate-300 px-2 py-1 text-xs font-medium outline-none focus:border-brand-500 dark:border-slate-600 ${PHONE_CALL_STATUS_COLORS[value]}`}
+        className={`w-full rounded-lg border border-gray-300 px-2 py-1 text-xs font-medium outline-none focus:border-brand-500 dark:border-gray-600 ${PHONE_CALL_STATUS_COLORS[value]}`}
       >
         <option value="pending">Not Called</option>
         <option value="connected">Connected</option>
@@ -317,7 +317,7 @@ function CallStatusCell({ lead, phone }: { lead: Lead; phone: PhoneSlot }) {
         <option value="incorrect_no">Incorrect No</option>
       </select>
       {slot?.lastCalledAt && (
-        <p className="text-[10px] text-slate-400 dark:text-slate-500" title={fmtDateTime(slot.lastCalledAt)}>
+        <p className="text-[10px] text-gray-400 dark:text-gray-500" title={fmtDateTime(slot.lastCalledAt)}>
           Called {fmtRelative(slot.lastCalledAt)}
         </p>
       )}
@@ -331,7 +331,7 @@ function LeadStatusCell({ lead, phone }: { lead: Lead; phone: PhoneSlot }) {
   const num = phoneNumberOf(lead, phone);
   const slot = phoneSlotOf(lead, phone);
   const value = (slot?.leadOutcome ?? 'none') as PhoneLeadOutcome;
-  if (phone !== 'phone1' && !num) return <span className="text-slate-300">—</span>;
+  if (phone !== 'phone1' && !num) return <span className="text-gray-300">—</span>;
   return (
     <select
       value={value}
@@ -342,7 +342,7 @@ function LeadStatusCell({ lead, phone }: { lead: Lead; phone: PhoneSlot }) {
           { onError: (err) => toast.error(apiError(err)) }
         )
       }
-      className={`w-full rounded-lg border border-slate-300 px-2 py-1 text-xs font-medium outline-none focus:border-brand-500 dark:border-slate-600 ${PHONE_LEAD_OUTCOME_COLORS[value]}`}
+      className={`w-full rounded-lg border border-gray-300 px-2 py-1 text-xs font-medium outline-none focus:border-brand-500 dark:border-gray-600 ${PHONE_LEAD_OUTCOME_COLORS[value]}`}
     >
       <option value="none">—</option>
       <option value="interested">Interested</option>
@@ -366,7 +366,7 @@ function PhoneRemarkCell({ lead, phone }: { lead: Lead; phone: PhoneSlot }) {
     update.mutate({ id: lead._id, phone, remark: t }, { onError: (e) => toast.error(apiError(e)) });
   }
 
-  if (phone !== 'phone1' && !num) return <span className="text-slate-300">—</span>;
+  if (phone !== 'phone1' && !num) return <span className="text-gray-300">—</span>;
   return (
     <div onClick={(e) => e.stopPropagation()}>
       <div className="flex items-center gap-1">
@@ -375,14 +375,14 @@ function PhoneRemarkCell({ lead, phone }: { lead: Lead; phone: PhoneSlot }) {
           onChange={(e) => setText(e.target.value)}
           onKeyDown={(e) => e.key === 'Enter' && submit()}
           placeholder="Remark…"
-          className="w-full rounded-lg border border-slate-300 px-2 py-1 text-xs outline-none focus:border-brand-500 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-100 dark:placeholder:text-slate-500"
+          className="w-full rounded-lg border border-gray-300 px-2 py-1 text-xs outline-none focus:border-brand-500 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100 dark:placeholder:text-gray-500"
         />
         <button onClick={submit} className="rounded p-1 text-brand-600 hover:bg-brand-50" title="Add remark">
           <Send size={13} />
         </button>
       </div>
       {last && (
-        <p className="mt-0.5 truncate text-[11px] text-slate-400" title={last.text}>
+        <p className="mt-0.5 truncate text-[11px] text-gray-400" title={last.text}>
           {phoneRemarks.length}× · {last.text}
         </p>
       )}
@@ -459,7 +459,7 @@ function EditableTextCell({
         }}
         onClick={(e) => e.stopPropagation()}
         placeholder={placeholder}
-        className="w-full rounded border border-brand-500 bg-white px-1.5 py-0.5 text-sm outline-none dark:bg-slate-800 dark:text-slate-100"
+        className="w-full rounded border border-brand-500 bg-white px-1.5 py-0.5 text-sm outline-none dark:bg-gray-800 dark:text-gray-100"
       />
     );
   }
@@ -473,10 +473,10 @@ function EditableTextCell({
         setEditing(true);
       }}
       title={current || 'Click to edit'}
-      className="flex w-full min-w-0 items-center gap-1 rounded px-1 py-0.5 text-left hover:bg-slate-100 dark:hover:bg-slate-700"
+      className="flex w-full min-w-0 items-center gap-1 rounded px-1 py-0.5 text-left hover:bg-gray-100 dark:hover:bg-gray-700"
     >
       <span className="truncate">{current || '\u2014'}</span>
-      <Pencil size={11} className="shrink-0 text-slate-300 opacity-0 group-hover:opacity-100 dark:text-slate-500" />
+      <Pencil size={11} className="shrink-0 text-gray-300 opacity-0 group-hover:opacity-100 dark:text-gray-500" />
     </button>
   );
 }
@@ -508,7 +508,7 @@ const COLUMNS: ColumnDef[] = [
     locked: true,
     cell: (l, ctx) => (
       <div className="flex min-w-0 items-center gap-1.5">
-        <span className="min-w-0 flex-1 font-medium text-slate-800 dark:text-slate-100">
+        <span className="min-w-0 flex-1 font-medium text-gray-800 dark:text-gray-100">
           <EditableTextCell lead={l} field="name" />
         </span>
         <Badge className={`shrink-0 ${LEAD_STATUS_COLORS[l.status]}`}>{LEAD_STATUS_LABELS[l.status]}</Badge>
@@ -517,7 +517,7 @@ const COLUMNS: ColumnDef[] = [
           <button
             onClick={(e) => { e.stopPropagation(); ctx.onEdit!(l); }}
             title="Edit all details"
-            className="shrink-0 rounded p-1 text-slate-400 opacity-0 transition-opacity hover:bg-slate-100 hover:text-slate-600 group-hover:opacity-100 dark:hover:bg-slate-700 dark:hover:text-slate-200"
+            className="shrink-0 rounded p-1 text-gray-400 opacity-0 transition-opacity hover:bg-gray-100 hover:text-gray-600 group-hover:opacity-100 dark:hover:bg-gray-700 dark:hover:text-gray-200"
           >
             <Pencil size={13} />
           </button>
@@ -555,7 +555,7 @@ const COLUMNS: ColumnDef[] = [
       ctx.onAssign ? (
         <AssignSelect lead={l} telecallers={ctx.telecallers} onAssign={ctx.onAssign} />
       ) : (
-        (l.assignedTo as User | undefined)?.name ?? <span className="text-slate-300">—</span>
+        (l.assignedTo as User | undefined)?.name ?? <span className="text-gray-300">—</span>
       ),
   },
   { id: 'phone1', label: 'Phone 1', cell: (l) => <PhoneNumberCell lead={l} phone="phone1" /> },
@@ -599,7 +599,7 @@ export function ShowNumbersToggle({ full }: { full?: boolean } = {}) {
       } ${
         show
           ? 'border-brand-400 bg-brand-50 text-brand-700 dark:border-brand-500 dark:bg-brand-500/15 dark:text-brand-300'
-          : 'border-slate-200 bg-white text-slate-600 hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-300 dark:hover:bg-slate-800'
+          : 'border-gray-200 bg-white text-gray-600 hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 dark:hover:bg-gray-800'
       }`}
     >
       {show ? <Eye size={full ? 15 : 13} /> : <EyeOff size={full ? 15 : 13} />}
@@ -635,7 +635,7 @@ export function ColumnsMenu({ isAdmin }: { isAdmin: boolean }) {
         className={`flex shrink-0 items-center gap-1 rounded-lg border px-2.5 py-1.5 text-xs font-medium transition-colors ${
           open || hiddenCount
             ? 'border-brand-400 bg-brand-50 text-brand-700 dark:border-brand-500 dark:bg-brand-500/15 dark:text-brand-300'
-            : 'border-slate-200 bg-white text-slate-600 hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-300 dark:hover:bg-slate-800'
+            : 'border-gray-200 bg-white text-gray-600 hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 dark:hover:bg-gray-800'
         }`}
       >
         <Columns3 size={13} />
@@ -644,21 +644,21 @@ export function ColumnsMenu({ isAdmin }: { isAdmin: boolean }) {
         {hiddenCount > 0 && <span className="ml-0.5 rounded-full bg-brand-500 px-1.5 text-[10px] font-bold text-white">{hiddenCount}</span>}
       </button>
       {open && (
-        <div className="absolute right-0 z-30 mt-1 w-56 rounded-xl border border-slate-200 bg-white p-2 shadow-lg dark:border-slate-700 dark:bg-slate-800">
+        <div className="absolute right-0 z-30 mt-1 w-56 rounded-xl border border-gray-200 bg-white p-2 shadow-lg dark:border-gray-700 dark:bg-gray-800">
           <div className="flex items-center justify-between px-2 py-1">
-            <span className="text-xs font-semibold uppercase tracking-wide text-slate-400 dark:text-slate-500">Toggle columns</span>
+            <span className="text-xs font-semibold uppercase tracking-wide text-gray-400 dark:text-gray-500">Toggle columns</span>
             <button onClick={resetCols} className="flex items-center gap-1 text-[11px] text-brand-600 hover:underline dark:text-brand-400">
               <RotateCcw size={11} /> Reset
             </button>
           </div>
-          <div className="max-h-72 overflow-y-auto text-slate-700 dark:text-slate-200">
+          <div className="max-h-72 overflow-y-auto text-gray-700 dark:text-gray-200">
             {cols.map((c) => {
               const visible = !hiddenCols.includes(c.id);
               return (
                 <label
                   key={c.id}
                   className={`flex items-center gap-2 rounded-lg px-2 py-1.5 text-sm ${
-                    c.locked ? 'cursor-not-allowed opacity-50' : 'cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-700'
+                    c.locked ? 'cursor-not-allowed opacity-50' : 'cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700'
                   }`}
                 >
                   <input
@@ -779,7 +779,7 @@ export function ContactsTable({
   const allChecked = selectable && leads.every((l) => selected.includes(l._id));
 
   const SortHeader = ({ field, label }: { field: string; label: string }) => (
-    <button onClick={() => onSort(field)} className="flex items-center gap-1 hover:text-slate-700 dark:hover:text-slate-200">
+    <button onClick={() => onSort(field)} className="flex items-center gap-1 hover:text-gray-700 dark:hover:text-gray-200">
       {label}
       {sortBy === field && (order === 'asc' ? <ArrowUp size={12} /> : <ArrowDown size={12} />)}
     </button>
@@ -792,7 +792,7 @@ export function ContactsTable({
     <th
       style={pinned ? { position: 'sticky', left: pinnedLeft.name } : undefined}
       className={`relative select-none px-2 py-2 ${overId === col.id ? 'bg-brand-50' : ''} ${
-        pinned ? 'z-30 bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-slate-700' : ''
+        pinned ? 'z-30 bg-white dark:bg-gray-900 border-r border-gray-200 dark:border-gray-700' : ''
       }`}
       onDragOver={(e) => {
         if (dragId) {
@@ -812,7 +812,7 @@ export function ContactsTable({
         title="Drag to reorder"
         className={`flex cursor-grab items-center gap-1 active:cursor-grabbing ${dragId === col.id ? 'opacity-40' : ''}`}
       >
-        <GripVertical size={11} className="shrink-0 text-slate-300" />
+        <GripVertical size={11} className="shrink-0 text-gray-300" />
         {col.sortField ? <SortHeader field={col.sortField} label={col.label} /> : <span>{col.label}</span>}
       </div>
       <span
@@ -833,19 +833,19 @@ export function ContactsTable({
               <col key={id} style={{ width: widthOf(id) }} />
             ))}
           </colgroup>
-          <thead className="sticky top-0 z-10 bg-white shadow-[0_1px_0_0_#e2e8f0] dark:bg-slate-900 dark:shadow-[0_1px_0_0_#334155]">
-            <tr className="text-left text-xs uppercase tracking-wide text-slate-400 dark:text-slate-500">
+          <thead className="sticky top-0 z-10 bg-white shadow-[0_1px_0_0_#e2e8f0] dark:bg-gray-900 dark:shadow-[0_1px_0_0_#334155]">
+            <tr className="text-left text-xs uppercase tracking-wide text-gray-400 dark:text-gray-500">
               {selectable && (
                 <th
                   style={{ position: 'sticky', left: pinnedLeft.select }}
-                  className="relative z-30 select-none bg-white px-2 py-2 dark:bg-slate-900"
+                  className="relative z-30 select-none bg-white px-2 py-2 dark:bg-gray-900"
                 >
                   <input type="checkbox" className="h-4 w-4" checked={!!allChecked} onChange={onToggleAll} />
                 </th>
               )}
               <th
                 style={{ position: 'sticky', left: pinnedLeft.expand }}
-                className="relative z-30 select-none bg-white px-2 py-2 dark:bg-slate-900"
+                className="relative z-30 select-none bg-white px-2 py-2 dark:bg-gray-900"
               />
               {visibleCols.map((col) => (
                 <ThData key={col.id} col={col} />
@@ -875,7 +875,7 @@ export function ContactsTable({
       </div>
 
       {/* Mobile cards */}
-      <div className="divide-y divide-slate-100 dark:divide-slate-800 md:hidden">
+      <div className="divide-y divide-gray-100 dark:divide-gray-800 md:hidden">
         {leads.map((lead) => (
           <MobileCard
             key={lead._id}
@@ -920,7 +920,7 @@ function AssignSelect({
         const t = telecallers.find((x) => x._id === e.target.value);
         if (t) onAssign?.(lead._id, t._id, t.name);
       }}
-      className="min-h-11 w-full rounded-lg border border-slate-300 bg-white px-2 py-1 text-xs outline-none focus:border-brand-500 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-100 md:min-h-0"
+      className="min-h-11 w-full rounded-lg border border-gray-300 bg-white px-2 py-1 text-xs outline-none focus:border-brand-500 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100 md:min-h-0"
     >
       <option value="">Assign…</option>
       {telecallers.map((t) => (
@@ -947,7 +947,7 @@ function PriorityCell({ lead, isAdmin }: { lead: Lead; isAdmin: boolean }) {
           { onError: (err) => toast.error(apiError(err)) }
         )
       }
-      className="rounded-lg border border-slate-300 bg-white px-2 py-1 text-xs outline-none focus:border-brand-500 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-100"
+      className="rounded-lg border border-gray-300 bg-white px-2 py-1 text-xs outline-none focus:border-brand-500 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100"
     >
       {PRIORITIES.map((p) => (
         <option key={p} value={p}>
@@ -997,11 +997,11 @@ function PhoneOutcomePanel({
 
   if (isAdmin) {
     return (
-      <div className="space-y-2 rounded-xl border border-slate-200 bg-white p-3 dark:border-slate-700 dark:bg-slate-900">
-        <p className="text-[10px] font-semibold uppercase tracking-wide text-slate-400 dark:text-slate-500">
+      <div className="space-y-2 rounded-xl border border-gray-200 bg-white p-3 dark:border-gray-700 dark:bg-gray-900">
+        <p className="text-[10px] font-semibold uppercase tracking-wide text-gray-400 dark:text-gray-500">
           {label}
           {phoneNumber && (
-            <span className="ml-1.5 normal-case text-slate-500 dark:text-slate-400">
+            <span className="ml-1.5 normal-case text-gray-500 dark:text-gray-400">
               {formatPhoneDisplay(phoneNumber, lead.country)}
             </span>
           )}
@@ -1018,9 +1018,9 @@ function PhoneOutcomePanel({
           )}
         </div>
         {phoneRemarks.slice(-2).reverse().map((r, i) => (
-          <div key={r._id ?? i} className="rounded bg-slate-50 p-1.5 text-xs text-slate-600 dark:bg-slate-800 dark:text-slate-300">
+          <div key={r._id ?? i} className="rounded bg-gray-50 p-1.5 text-xs text-gray-600 dark:bg-gray-800 dark:text-gray-300">
             {r.text}
-            <span className="ml-1 text-[10px] text-slate-400 dark:text-slate-500">{fmtDate(r.createdAt)}</span>
+            <span className="ml-1 text-[10px] text-gray-400 dark:text-gray-500">{fmtDate(r.createdAt)}</span>
           </div>
         ))}
       </div>
@@ -1028,8 +1028,8 @@ function PhoneOutcomePanel({
   }
 
   return (
-    <div className="space-y-2 rounded-xl border border-slate-200 bg-white p-3 dark:border-slate-700 dark:bg-slate-900">
-      <p className="text-[10px] font-semibold uppercase tracking-wide text-slate-400 dark:text-slate-500">{label}</p>
+    <div className="space-y-2 rounded-xl border border-gray-200 bg-white p-3 dark:border-gray-700 dark:bg-gray-900">
+      <p className="text-[10px] font-semibold uppercase tracking-wide text-gray-400 dark:text-gray-500">{label}</p>
       <PhoneActions phone={phoneNumber} lead={lead} slot={phone} />
       <div className="flex flex-wrap gap-1.5" onClick={(e) => e.stopPropagation()}>
         {PHONE_CALL_OPTIONS.map((cs) => (
@@ -1040,7 +1040,7 @@ function PhoneOutcomePanel({
             className={`rounded-lg px-2.5 py-1 text-xs font-medium transition-colors ${
               slot.callStatus === cs
                 ? `${PHONE_CALL_STATUS_COLORS[cs]} ring-1 ring-current`
-                : 'bg-slate-100 text-slate-500 hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-400 dark:hover:bg-slate-700'
+                : 'bg-gray-100 text-gray-500 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700'
             }`}
           >
             {PHONE_CALL_STATUS_LABELS[cs]}
@@ -1056,7 +1056,7 @@ function PhoneOutcomePanel({
             className={`rounded-lg px-2.5 py-1 text-xs font-medium transition-colors ${
               slot.leadOutcome === lo
                 ? `${PHONE_LEAD_OUTCOME_COLORS[lo]} ring-1 ring-current`
-                : 'bg-slate-100 text-slate-500 hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-400 dark:hover:bg-slate-700'
+                : 'bg-gray-100 text-gray-500 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700'
             }`}
           >
             {PHONE_LEAD_OUTCOME_LABELS[lo]}
@@ -1069,14 +1069,14 @@ function PhoneOutcomePanel({
           onChange={(e) => setRemarkText(e.target.value)}
           onKeyDown={(e) => e.key === 'Enter' && submitRemark()}
           placeholder={`Remark for ${label}…`}
-          className="w-full rounded-lg border border-slate-300 px-2 py-1 text-xs outline-none focus:border-brand-500 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-100 dark:placeholder:text-slate-500"
+          className="w-full rounded-lg border border-gray-300 px-2 py-1 text-xs outline-none focus:border-brand-500 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100 dark:placeholder:text-gray-500"
         />
         <button onClick={submitRemark} className="rounded p-1 text-brand-600 hover:bg-brand-50" title="Send">
           <Send size={13} />
         </button>
       </div>
       {phoneRemarks.slice(-2).reverse().map((r, i) => (
-        <p key={r._id ?? i} className="truncate text-[11px] text-slate-400" title={r.text}>
+        <p key={r._id ?? i} className="truncate text-[11px] text-gray-400" title={r.text}>
           {r.text}
         </p>
       ))}
@@ -1108,7 +1108,7 @@ function ExpandedDetail({
   }
 
   return (
-    <div className="space-y-4 bg-slate-50 p-3 dark:bg-slate-900/50 sm:p-4">
+    <div className="space-y-4 bg-gray-50 p-3 dark:bg-gray-900/50 sm:p-4">
       {/* Per-phone call tracking */}
       {!compact && (
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
@@ -1144,16 +1144,16 @@ function ExpandedDetail({
           </div>
         </div>
         <div>
-          <p className="mb-1 text-xs font-semibold text-slate-500 dark:text-slate-400">All Remarks</p>
+          <p className="mb-1 text-xs font-semibold text-gray-500 dark:text-gray-400">All Remarks</p>
           <div className="max-h-48 space-y-1.5 overflow-y-auto">
-            {!lead.remarks?.length && <p className="text-xs text-slate-400 dark:text-slate-500">No remarks yet.</p>}
+            {!lead.remarks?.length && <p className="text-xs text-gray-400 dark:text-gray-500">No remarks yet.</p>}
             {(lead.remarks ?? [])
               .slice()
               .reverse()
               .map((r, i) => (
-                <div key={r._id ?? i} className="rounded-lg bg-white p-2 dark:bg-slate-800">
-                  <p className="text-xs text-slate-700 dark:text-slate-200">{r.text}</p>
-                  <p className="mt-0.5 text-[10px] text-slate-400 dark:text-slate-500">
+                <div key={r._id ?? i} className="rounded-lg bg-white p-2 dark:bg-gray-800">
+                  <p className="text-xs text-gray-700 dark:text-gray-200">{r.text}</p>
+                  <p className="mt-0.5 text-[10px] text-gray-400 dark:text-gray-500">
                     {r.byName || 'Unknown'}
                     {r.byRole ? ` (${r.byRole === 'superadmin' ? 'Admin' : 'User'})` : ''}
                     {r.phone ? ` · ${r.phone === 'phone1' ? 'Phone 1' : r.phone === 'phone2' ? 'Phone 2' : 'Phone 3'}` : ''} ·{' '}
@@ -1174,8 +1174,8 @@ function ExpandedDetail({
 function Detail({ label, value }: { label: string; value: string }) {
   return (
     <div>
-      <span className="text-xs text-slate-400 dark:text-slate-500">{label}</span>
-      <p className="break-words text-slate-700 dark:text-slate-200">{value}</p>
+      <span className="text-xs text-gray-400 dark:text-gray-500">{label}</span>
+      <p className="break-words text-gray-700 dark:text-gray-200">{value}</p>
     </div>
   );
 }
@@ -1209,23 +1209,23 @@ function Row({
   onEdit?: (lead: Lead) => void;
 }) {
   const [open, setOpen] = useState(false);
-  const muted = 'text-slate-500 dark:text-slate-400';
+  const muted = 'text-gray-500 dark:text-gray-400';
   const ctx: CellCtx = { isAdmin, telecallers, onAssign, onEdit };
 
   // Frozen-left cells share an opaque background that follows the row hover state.
   const stickyBg =
-    'bg-white group-hover:bg-slate-50 dark:bg-slate-900 dark:group-hover:bg-slate-800';
+    'bg-white group-hover:bg-gray-50 dark:bg-gray-900 dark:group-hover:bg-gray-800';
 
   return (
     <>
-      <tr className="group border-b border-slate-100 hover:bg-slate-50/60 dark:border-slate-800 dark:hover:bg-slate-800/40">
+      <tr className="group border-b border-gray-100 hover:bg-gray-50/60 dark:border-gray-800 dark:hover:bg-gray-800/40">
         {selectable && (
           <td style={{ position: 'sticky', left: pinnedLeft.select, zIndex: 10 }} className={`${pad} ${stickyBg}`}>
             <input type="checkbox" className="h-4 w-4" checked={selected} onChange={() => onToggle(lead._id)} />
           </td>
         )}
         <td style={{ position: 'sticky', left: pinnedLeft.expand, zIndex: 10 }} className={`${pad} ${stickyBg}`}>
-          <button onClick={() => setOpen((o) => !o)} className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200">
+          <button onClick={() => setOpen((o) => !o)} className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200">
             {open ? <ChevronDown size={16} /> : <ChevronRight size={16} />}
           </button>
         </td>
@@ -1236,7 +1236,7 @@ function Row({
               key={col.id}
               style={pinned ? { position: 'sticky', left: pinnedLeft.name, zIndex: 10 } : undefined}
               className={`${col.muted ? `${pad} ${muted}` : pad} ${
-                pinned ? `${stickyBg} border-r border-slate-200 dark:border-slate-700` : ''
+                pinned ? `${stickyBg} border-r border-gray-200 dark:border-gray-700` : ''
               }`}
             >
               {col.cell(lead, ctx)}
@@ -1289,12 +1289,12 @@ function MobilePhoneBlock({ lead, slot }: { lead: Lead; slot: PhoneSlot }) {
   }
 
   return (
-    <div className="rounded-xl border border-slate-200 bg-slate-50/60 p-2.5 dark:border-slate-700 dark:bg-slate-800/40">
+    <div className="rounded-xl border border-gray-200 bg-gray-50/60 p-2.5 dark:border-gray-700 dark:bg-gray-800/40">
       <div className="flex items-baseline gap-2">
-        <span className="shrink-0 text-[10px] font-semibold uppercase tracking-wide text-slate-400 dark:text-slate-500">
+        <span className="shrink-0 text-[10px] font-semibold uppercase tracking-wide text-gray-400 dark:text-gray-500">
           {label}
         </span>
-        <p className="min-w-0 flex-1 truncate text-sm font-medium text-slate-700 dark:text-slate-200">
+        <p className="min-w-0 flex-1 truncate text-sm font-medium text-gray-700 dark:text-gray-200">
           {showNumbers ? formatPhoneDisplay(num, lead.country) : '•••• ••••'}
         </p>
       </div>
@@ -1312,7 +1312,7 @@ function MobilePhoneBlock({ lead, slot }: { lead: Lead; slot: PhoneSlot }) {
               { onError: (err) => toast.error(apiError(err)) }
             )
           }
-          className={`min-h-11 w-full truncate rounded-lg border border-slate-300 py-2 pl-2 pr-7 font-medium outline-none focus:border-brand-500 dark:border-slate-600 ${PHONE_CALL_STATUS_COLORS[callStatus]}`}
+          className={`min-h-11 w-full truncate rounded-lg border border-gray-300 py-2 pl-2 pr-7 font-medium outline-none focus:border-brand-500 dark:border-gray-600 ${PHONE_CALL_STATUS_COLORS[callStatus]}`}
         >
           <option value="pending">Not Called</option>
           <option value="connected">Connected</option>
@@ -1329,7 +1329,7 @@ function MobilePhoneBlock({ lead, slot }: { lead: Lead; slot: PhoneSlot }) {
               { onError: (err) => toast.error(apiError(err)) }
             )
           }
-          className={`min-h-11 w-full truncate rounded-lg border border-slate-300 py-2 pl-2 pr-7 font-medium outline-none focus:border-brand-500 dark:border-slate-600 ${PHONE_LEAD_OUTCOME_COLORS[leadOutcome]}`}
+          className={`min-h-11 w-full truncate rounded-lg border border-gray-300 py-2 pl-2 pr-7 font-medium outline-none focus:border-brand-500 dark:border-gray-600 ${PHONE_LEAD_OUTCOME_COLORS[leadOutcome]}`}
         >
           <option value="none">No outcome</option>
           <option value="interested">Interested</option>
@@ -1338,7 +1338,7 @@ function MobilePhoneBlock({ lead, slot }: { lead: Lead; slot: PhoneSlot }) {
       </div>
 
       {outcome?.lastCalledAt && (
-        <p className="mt-1.5 text-[11px] text-slate-400 dark:text-slate-500" title={fmtDateTime(outcome.lastCalledAt)}>
+        <p className="mt-1.5 text-[11px] text-gray-400 dark:text-gray-500" title={fmtDateTime(outcome.lastCalledAt)}>
           Called {fmtRelative(outcome.lastCalledAt)}
         </p>
       )}
@@ -1353,12 +1353,12 @@ function MobilePhoneBlock({ lead, slot }: { lead: Lead; slot: PhoneSlot }) {
             onChange={(e) => setRemark(e.target.value)}
             onKeyDown={(e) => e.key === 'Enter' && submitRemark()}
             placeholder={`Remark for ${label}…`}
-            className="min-h-11 w-full rounded-lg border border-slate-300 px-3 py-2 outline-none focus:border-brand-500 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-100 dark:placeholder:text-slate-500"
+            className="min-h-11 w-full rounded-lg border border-gray-300 px-3 py-2 outline-none focus:border-brand-500 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100 dark:placeholder:text-gray-500"
           />
           <button
             onClick={submitRemark}
             aria-label="Save remark"
-            className="tap flex items-center justify-center rounded-lg bg-brand-600 px-3 text-white"
+            className="tap flex items-center justify-center rounded-btn bg-gray-950 px-3 text-white dark:bg-white dark:text-gray-950"
           >
             <Send size={16} />
           </button>
@@ -1366,7 +1366,7 @@ function MobilePhoneBlock({ lead, slot }: { lead: Lead; slot: PhoneSlot }) {
       ) : (
         <button
           onClick={() => setShowRemark(true)}
-          className="mt-2 flex w-full items-center gap-1.5 rounded-lg border border-dashed border-slate-300 px-2.5 py-2 text-left text-xs text-slate-500 dark:border-slate-600 dark:text-slate-400"
+          className="mt-2 flex w-full items-center gap-1.5 rounded-lg border border-dashed border-gray-300 px-2.5 py-2 text-left text-xs text-gray-500 dark:border-gray-600 dark:text-gray-400"
         >
           <Send size={12} className="shrink-0" />
           <span className="truncate">
@@ -1428,19 +1428,19 @@ function MobileCard({
         <div className="min-w-0 flex-1">
           <div className="flex items-start gap-2">
             <div className="min-w-0 flex-1">
-              <p className="truncate text-[15px] font-semibold text-slate-800 dark:text-slate-100">{lead.name}</p>
+              <p className="truncate text-[15px] font-semibold text-gray-800 dark:text-gray-100">{lead.name}</p>
               {(lead.company || lead.title) && (
-                <p className="truncate text-xs text-slate-500 dark:text-slate-400">
+                <p className="truncate text-xs text-gray-500 dark:text-gray-400">
                   {[lead.title, lead.company].filter(Boolean).join(' · ')}
                 </p>
               )}
-              {loc && <p className="truncate text-xs text-slate-400 dark:text-slate-500">{loc}</p>}
+              {loc && <p className="truncate text-xs text-gray-400 dark:text-gray-500">{loc}</p>}
             </div>
             <button
               onClick={() => setOpen((o) => !o)}
               aria-label={open ? 'Hide details' : 'Show details'}
               aria-expanded={open}
-              className="tap -mr-1 flex shrink-0 items-center justify-center rounded-lg text-slate-400"
+              className="tap -mr-1 flex shrink-0 items-center justify-center rounded-lg text-gray-400"
             >
               {open ? <ChevronDown size={20} /> : <ChevronRight size={20} />}
             </button>
@@ -1451,7 +1451,7 @@ function MobileCard({
             {lead.qualified && <Badge className="bg-green-600 text-white">Lead</Badge>}
             <Badge className={PRIORITY_COLORS[lead.priority]}>{lead.priority}</Badge>
             {assignee && (
-              <Badge className="bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300">{assignee}</Badge>
+              <Badge className="bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-300">{assignee}</Badge>
             )}
           </div>
         </div>
@@ -1467,7 +1467,7 @@ function MobileCard({
           ) : (
             <button
               onClick={() => setShowAllPhones(true)}
-              className="flex min-h-11 w-full items-center justify-center gap-1.5 rounded-xl border border-dashed border-slate-300 text-xs font-medium text-slate-500 dark:border-slate-600 dark:text-slate-400"
+              className="flex min-h-11 w-full items-center justify-center gap-1.5 rounded-xl border border-dashed border-gray-300 text-xs font-medium text-gray-500 dark:border-gray-600 dark:text-gray-400"
             >
               <Phone size={13} /> {extraSlots.length} more number{extraSlots.length > 1 ? 's' : ''}
             </button>
@@ -1483,7 +1483,7 @@ function MobileCard({
         {onEdit && (
           <button
             onClick={() => onEdit(lead)}
-            className="tap flex shrink-0 items-center justify-center gap-1.5 rounded-lg border border-slate-300 px-3 text-xs font-medium text-slate-600 dark:border-slate-600 dark:text-slate-300"
+            className="tap flex shrink-0 items-center justify-center gap-1.5 rounded-lg border border-gray-300 px-3 text-xs font-medium text-gray-600 dark:border-gray-600 dark:text-gray-300"
           >
             <Pencil size={14} /> Edit
           </button>
@@ -1493,7 +1493,7 @@ function MobileCard({
       {open && (
         <div
           ref={detailRef}
-          className="mt-2 overflow-hidden rounded-xl border border-slate-200 scroll-mb-24 dark:border-slate-700"
+          className="mt-2 overflow-hidden rounded-xl border border-gray-200 scroll-mb-24 dark:border-gray-700"
         >
           <ExpandedDetail lead={lead} isAdmin={isAdmin} onEdit={onEdit} compact />
         </div>

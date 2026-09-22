@@ -40,7 +40,7 @@ const STATUSES: LeadStatus[] = [
 function Field({ label, children }: { label: string; children: ReactNode }) {
   return (
     <div>
-      <span className="mb-0.5 block text-[11px] font-medium uppercase tracking-wide text-slate-400 dark:text-slate-500">
+      <span className="mb-0.5 block text-[11px] font-medium uppercase tracking-wide text-gray-400 dark:text-gray-500">
         {label}
       </span>
       {children}
@@ -202,7 +202,7 @@ export function ContactsView({ mode }: { mode: 'contacts' | 'leads' }) {
 
   const searchBox = (
     <div className="relative">
-      <Search className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-500" size={15} />
+      <Search className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 dark:text-gray-500" size={15} />
       <Input
         className="pl-9"
         type="search"
@@ -254,7 +254,7 @@ export function ContactsView({ mode }: { mode: 'contacts' | 'leads' }) {
       <Field label="Order">
         <button
           onClick={() => setOrder((o) => (o === 'asc' ? 'desc' : 'asc'))}
-          className="min-h-11 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-600 hover:bg-slate-50 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-200 dark:hover:bg-slate-700 md:min-h-0"
+          className="min-h-11 w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-600 hover:bg-gray-50 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-200 dark:hover:bg-gray-700 md:min-h-0"
         >
           {order === 'asc' ? 'Ascending ↑' : 'Descending ↓'}
         </button>
@@ -268,16 +268,16 @@ export function ContactsView({ mode }: { mode: 'contacts' | 'leads' }) {
       </Field>
       {/* Density only changes the desktop table's row padding. */}
       <Field label="Density">
-        <div className="hidden w-full overflow-hidden rounded-lg border border-slate-300 dark:border-slate-600 md:flex">
+        <div className="hidden w-full overflow-hidden rounded-lg border border-gray-300 dark:border-gray-600 md:flex">
           <button
             onClick={() => setDensity('comfortable')}
-            className={`flex-1 py-2 text-xs ${density === 'comfortable' ? 'bg-brand-50 text-brand-700 dark:bg-brand-500/15 dark:text-brand-300' : 'text-slate-500 dark:text-slate-400'}`}
+            className={`flex-1 py-2 text-xs ${density === 'comfortable' ? 'bg-brand-50 text-brand-700 dark:bg-brand-500/15 dark:text-brand-300' : 'text-gray-500 dark:text-gray-400'}`}
           >
             Cozy
           </button>
           <button
             onClick={() => setDensity('compact')}
-            className={`flex-1 py-2 text-xs ${density === 'compact' ? 'bg-brand-50 text-brand-700 dark:bg-brand-500/15 dark:text-brand-300' : 'text-slate-500 dark:text-slate-400'}`}
+            className={`flex-1 py-2 text-xs ${density === 'compact' ? 'bg-brand-50 text-brand-700 dark:bg-brand-500/15 dark:text-brand-300' : 'text-gray-500 dark:text-gray-400'}`}
           >
             Compact
           </button>
@@ -303,7 +303,7 @@ export function ContactsView({ mode }: { mode: 'contacts' | 'leads' }) {
         <Button size="sm" variant="secondary" disabled={page <= 1} onClick={() => setPage((p) => p - 1)}>
           Previous
         </Button>
-        <span className="px-1 text-xs tabular-nums text-slate-500 dark:text-slate-400">
+        <span className="px-1 text-xs tabular-nums text-gray-500 dark:text-gray-400">
           {data?.pagination.page ?? page} / {totalPages}
         </span>
         <Button size="sm" variant="secondary" disabled={page >= totalPages} onClick={() => setPage((p) => p + 1)}>
@@ -317,8 +317,8 @@ export function ContactsView({ mode }: { mode: 'contacts' | 'leads' }) {
 
       {/* ── Desktop: one compact top bar ── */}
       <div className="hidden flex-wrap items-center gap-x-2 gap-y-1.5 md:flex">
-        <h1 className="shrink-0 text-base font-bold text-slate-800 dark:text-slate-100">
-          {title} <span className="text-xs font-normal text-slate-400 dark:text-slate-500">({total})</span>
+        <h1 className="shrink-0 text-base font-bold text-gray-800 dark:text-gray-100">
+          {title} <span className="text-xs font-normal text-gray-400 dark:text-gray-500">({total})</span>
         </h1>
 
         {isContacts && chips.map((c) => (
@@ -328,7 +328,7 @@ export function ContactsView({ mode }: { mode: 'contacts' | 'leads' }) {
             className={`shrink-0 rounded-lg border px-2.5 py-1 text-xs transition-colors ${
               c.active
                 ? 'border-brand-500 bg-brand-50 text-brand-700 dark:border-brand-500 dark:bg-brand-500/15 dark:text-brand-300'
-                : 'border-slate-200 bg-white text-slate-600 hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-300 dark:hover:bg-slate-800'
+                : 'border-gray-200 bg-white text-gray-600 hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 dark:hover:bg-gray-800'
             }`}
           >
             {c.label} <span className="font-semibold">{c.value}</span>
@@ -344,7 +344,7 @@ export function ContactsView({ mode }: { mode: 'contacts' | 'leads' }) {
               ? 'border-brand-500 bg-brand-50 text-brand-700 dark:border-brand-500 dark:bg-brand-500/15 dark:text-brand-300'
               : hasFilters
               ? 'border-brand-400 bg-brand-50 text-brand-700 dark:border-brand-500 dark:bg-brand-500/15 dark:text-brand-300'
-              : 'border-slate-200 bg-white text-slate-600 hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-300 dark:hover:bg-slate-800'
+              : 'border-gray-200 bg-white text-gray-600 hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 dark:hover:bg-gray-800'
           }`}
         >
           <SlidersHorizontal size={13} />
@@ -378,8 +378,8 @@ export function ContactsView({ mode }: { mode: 'contacts' | 'leads' }) {
       {/* ── Mobile: title row, search, then a swipeable chip strip ── */}
       <div className="space-y-2 md:hidden">
         <div className="flex items-center gap-1.5">
-          <h1 className="min-w-0 flex-1 truncate text-lg font-bold text-slate-800 dark:text-slate-100">
-            {title} <span className="text-sm font-normal text-slate-400 dark:text-slate-500">({total})</span>
+          <h1 className="min-w-0 flex-1 truncate text-lg font-bold text-gray-800 dark:text-gray-100">
+            {title} <span className="text-sm font-normal text-gray-400 dark:text-gray-500">({total})</span>
           </h1>
           <button
             onClick={() => setMobileFiltersOpen(true)}
@@ -387,7 +387,7 @@ export function ContactsView({ mode }: { mode: 'contacts' | 'leads' }) {
             className={`tap relative flex items-center justify-center rounded-lg border px-3 ${
               hasFilters
                 ? 'border-brand-500 bg-brand-50 text-brand-700 dark:border-brand-500 dark:bg-brand-500/15 dark:text-brand-300'
-                : 'border-slate-200 bg-white text-slate-600 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-300'
+                : 'border-gray-200 bg-white text-gray-600 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300'
             }`}
           >
             <SlidersHorizontal size={18} />
@@ -401,7 +401,7 @@ export function ContactsView({ mode }: { mode: 'contacts' | 'leads' }) {
             onClick={handleExport}
             disabled={exporting}
             aria-label="Export CSV"
-            className="tap flex items-center justify-center rounded-lg border border-slate-200 bg-white px-3 text-slate-600 disabled:opacity-50 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-300"
+            className="tap flex items-center justify-center rounded-lg border border-gray-200 bg-white px-3 text-gray-600 disabled:opacity-50 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300"
           >
             <Download size={18} />
           </button>
@@ -409,7 +409,7 @@ export function ContactsView({ mode }: { mode: 'contacts' | 'leads' }) {
             <button
               onClick={() => setImportOpen(true)}
               aria-label="Import contacts"
-              className="tap flex items-center justify-center rounded-lg border border-slate-200 bg-white px-3 text-slate-600 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-300"
+              className="tap flex items-center justify-center rounded-lg border border-gray-200 bg-white px-3 text-gray-600 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300"
             >
               <Upload size={18} />
             </button>
@@ -418,7 +418,7 @@ export function ContactsView({ mode }: { mode: 'contacts' | 'leads' }) {
             <button
               onClick={() => setFormOpen(true)}
               aria-label="Add contact"
-              className="tap flex items-center justify-center rounded-lg bg-brand-600 px-3 text-white"
+              className="tap flex items-center justify-center rounded-btn bg-gray-950 px-3 text-white dark:bg-white dark:text-gray-950"
             >
               <Plus size={20} />
             </button>
@@ -437,7 +437,7 @@ export function ContactsView({ mode }: { mode: 'contacts' | 'leads' }) {
                 className={`shrink-0 whitespace-nowrap rounded-full border px-3 py-1.5 text-xs transition-colors ${
                   c.active
                     ? 'border-brand-500 bg-brand-50 text-brand-700 dark:border-brand-500 dark:bg-brand-500/15 dark:text-brand-300'
-                    : 'border-slate-200 bg-white text-slate-600 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-300'
+                    : 'border-gray-200 bg-white text-gray-600 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300'
                 }`}
               >
                 {c.label} <span className="font-semibold">{c.value}</span>
@@ -449,7 +449,7 @@ export function ContactsView({ mode }: { mode: 'contacts' | 'leads' }) {
 
       {/* ── Desktop filter panel (the phone gets the sheet below) ── */}
       {!filtersCollapsed && (
-        <div className="hidden space-y-2 rounded-xl border border-slate-200 bg-white p-3 dark:border-slate-700 dark:bg-slate-900 md:block">
+        <div className="hidden space-y-2 rounded-xl border border-gray-200 bg-white p-3 dark:border-gray-700 dark:bg-gray-900 md:block">
           {searchBox}
           {filterFields}
         </div>
@@ -477,7 +477,7 @@ export function ContactsView({ mode }: { mode: 'contacts' | 'leads' }) {
 
       {/* Bulk-action bar */}
       {selectable && selected.length > 0 && (
-        <div className="flex flex-wrap items-center gap-2 rounded-lg bg-brand-50 p-2 text-sm dark:bg-brand-500/15 dark:text-slate-200 sm:gap-3 sm:px-4">
+        <div className="flex flex-wrap items-center gap-2 rounded-lg bg-brand-50 p-2 text-sm dark:bg-brand-500/15 dark:text-gray-200 sm:gap-3 sm:px-4">
           <span className="font-medium">{selected.length} selected</span>
           <Select
             className="w-full sm:w-52"
@@ -497,7 +497,7 @@ export function ContactsView({ mode }: { mode: 'contacts' | 'leads' }) {
       )}
 
       {/* List — takes all remaining vertical space */}
-      <div className="min-h-0 flex-1 overflow-auto overscroll-none-y rounded-xl border border-slate-200 bg-white dark:border-slate-700 dark:bg-slate-900">
+      <div className="min-h-0 flex-1 overflow-auto overscroll-none-y rounded-xl border border-gray-200 bg-white dark:border-gray-700 dark:bg-gray-900">
         <ContactsTable
           leads={leads}
           isLoading={isLoading}

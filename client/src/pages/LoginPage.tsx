@@ -32,16 +32,30 @@ export function LoginPage() {
   }
 
   return (
-    <div className="flex min-h-full items-center justify-center bg-gradient-to-br from-brand-600 to-brand-800 p-4">
-      <div className="w-full max-w-sm rounded-2xl bg-white p-8 shadow-xl dark:bg-slate-900">
-        <div className="mb-6 flex flex-col items-center">
+    <div className="relative flex min-h-full items-center justify-center overflow-hidden bg-white p-4 dark:bg-gray-950">
+      {/* Soft brand glow behind the card, echoing the nextgenfusion.in hero. */}
+      <div aria-hidden className="pointer-events-none absolute inset-0">
+        <div className="absolute -left-32 -top-32 h-96 w-96 rounded-full bg-brand-600/10 blur-3xl" />
+        <div className="absolute -right-24 top-1/3 h-80 w-80 rounded-full bg-fusion-violet/10 blur-3xl" />
+        <div className="absolute -bottom-32 left-1/3 h-80 w-80 rounded-full bg-fusion-cyan/10 blur-3xl" />
+      </div>
+      <div className="relative w-full max-w-sm">
+        <div className="mb-6 flex flex-col items-center text-center">
           {/* The logo is black-on-transparent, so it sits on a white pad to stay visible in dark mode. */}
-          <div className="mb-3 rounded-xl bg-white px-3 py-2">
-            <img src="/logo.png" alt="NextGen Fusion" className="h-16 w-auto" />
+          <div className="mb-5 rounded-btn bg-white px-3 py-2">
+            <img src="/logo.png" alt="NextGen Fusion" className="h-14 w-auto" />
           </div>
-          <h1 className="text-xl font-bold text-slate-800 dark:text-slate-100">NextGen Fusion CRM</h1>
-          <p className="text-sm text-slate-400 dark:text-slate-500">Telecaller Management</p>
+          <span className="mb-4 inline-flex items-center gap-2 rounded-btn border border-gray-200 bg-white px-3 py-1 text-xs font-medium text-gray-700 shadow-sm dark:border-gray-800 dark:bg-gray-900 dark:text-gray-300">
+            <span className="h-2 w-2 rounded-full bg-emerald-500" />
+            Telecaller Management
+            <span className="text-gray-400 dark:text-gray-500">· NextGen Fusion</span>
+          </span>
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
+            Welcome <span className="text-gradient">back</span>
+          </h1>
+          <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">Sign in to your CRM workspace</p>
         </div>
+        <div className="rounded-2xl border border-gray-200 bg-white/90 p-6 shadow-xl shadow-gray-200/50 backdrop-blur dark:border-gray-800 dark:bg-gray-900/90 dark:shadow-none sm:p-8">
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <Label htmlFor="email">Email</Label>
@@ -65,10 +79,11 @@ export function LoginPage() {
               required
             />
           </div>
-          <Button type="submit" loading={loading} className="w-full">
+          <Button type="submit" loading={loading} className="w-full py-3 md:py-2.5">
             Sign in
           </Button>
         </form>
+        </div>
       </div>
     </div>
   );

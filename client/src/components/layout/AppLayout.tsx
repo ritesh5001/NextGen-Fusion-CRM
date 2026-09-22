@@ -70,15 +70,26 @@ export function AppLayout() {
     <div className="flex h-full">
       {/* Desktop sidebar */}
       <aside
-        className={`hidden flex-col border-r border-slate-200 bg-white transition-[width] duration-200 dark:border-slate-800 dark:bg-slate-900 md:flex ${
+        className={`hidden flex-col border-r border-gray-200 bg-white transition-[width] duration-200 dark:border-gray-800 dark:bg-gray-900 md:flex ${
           collapsed ? 'w-16' : 'w-60'
         }`}
       >
-        <div className={`flex items-center py-4 ${collapsed ? 'justify-center px-2' : 'gap-2 px-5'}`}>
-          <div className="rounded-lg bg-brand-600 p-1.5 text-white">
-            <Phone size={18} />
-          </div>
-          {!collapsed && <span className="font-bold text-slate-800 dark:text-slate-100">NextGen Fusion CRM</span>}
+        <div className={`flex items-center py-4 ${collapsed ? 'justify-center px-2' : 'gap-2 px-4'}`}>
+          {collapsed ? (
+            <div className="bg-brand-gradient-br rounded-btn p-1.5 text-white">
+              <Phone size={18} />
+            </div>
+          ) : (
+            <>
+              {/* Black-on-transparent logo: a white pad keeps it legible in dark mode. */}
+              <div className="rounded-btn bg-white px-1.5 py-1">
+                <img src="/logo.png" alt="NextGen Fusion" className="h-8 w-auto" />
+              </div>
+              <span className="rounded-full border border-gray-200 px-2 py-0.5 text-[11px] font-semibold uppercase tracking-wider text-gray-500 dark:border-gray-700 dark:text-gray-400">
+                CRM
+              </span>
+            </>
+          )}
         </div>
         <nav className="flex-1 space-y-1 px-2 py-2">
           {items.map((item) => (
@@ -88,12 +99,12 @@ export function AppLayout() {
               end={item.to === '/'}
               title={collapsed ? item.label : undefined}
               className={({ isActive }) =>
-                `flex items-center rounded-lg px-3 py-2 text-sm font-medium transition-colors ${
+                `flex items-center rounded-full px-3 py-2 text-sm font-medium transition-colors ${
                   collapsed ? 'justify-center' : 'gap-3'
                 } ${
                   isActive
-                    ? 'bg-brand-50 text-brand-700 dark:bg-brand-500/15 dark:text-brand-300'
-                    : 'text-slate-600 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800'
+                    ? 'bg-gray-950 text-white dark:bg-white dark:text-gray-950'
+                    : 'text-gray-700 hover:bg-gray-100 hover:text-gray-950 dark:text-gray-300 dark:hover:bg-gray-800 dark:hover:text-white'
                 }`
               }
             >
@@ -105,7 +116,7 @@ export function AppLayout() {
         <button
           onClick={() => setCustomizeOpen(true)}
           title="Customize menu"
-          className={`flex items-center px-3 py-2 text-sm font-medium text-slate-400 hover:text-slate-600 dark:text-slate-500 dark:hover:text-slate-300 ${
+          className={`flex items-center px-3 py-2 text-sm font-medium text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300 ${
             collapsed ? 'justify-center' : 'gap-3 px-5'
           }`}
         >
@@ -115,7 +126,7 @@ export function AppLayout() {
         <button
           onClick={toggleSidebar}
           title={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
-          className={`flex items-center px-3 py-2 text-sm font-medium text-slate-400 hover:text-slate-600 dark:text-slate-500 dark:hover:text-slate-300 ${
+          className={`flex items-center px-3 py-2 text-sm font-medium text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300 ${
             collapsed ? 'justify-center' : 'gap-3 px-5'
           }`}
         >
@@ -125,7 +136,7 @@ export function AppLayout() {
         <button
           onClick={handleLogout}
           title={collapsed ? 'Log out' : undefined}
-          className={`flex items-center py-4 text-sm font-medium text-slate-500 hover:text-rose-600 dark:text-slate-400 dark:hover:text-rose-400 ${
+          className={`flex items-center py-4 text-sm font-medium text-gray-500 hover:text-rose-600 dark:text-gray-400 dark:hover:text-rose-400 ${
             collapsed ? 'justify-center px-3' : 'gap-3 px-5'
           }`}
         >
@@ -136,7 +147,7 @@ export function AppLayout() {
       {/* Main area. min-w-0 so a wide table scrolls inside its own container
           instead of stretching the whole layout sideways. */}
       <div className="flex min-w-0 flex-1 flex-col overflow-hidden">
-        <header className="flex shrink-0 items-center justify-between gap-2 border-b border-slate-200 bg-white px-3 py-2.5 dark:border-slate-800 dark:bg-slate-900 sm:px-4 sm:py-3">
+        <header className="flex shrink-0 items-center justify-between gap-2 border-b border-gray-200 bg-white/90 backdrop-blur px-3 py-2.5 dark:border-gray-800 dark:bg-gray-900 sm:px-4 sm:py-3">
           <WorkspaceSwitcher />
           <div className="flex items-center gap-1 sm:gap-3">
             {/* On a phone the theme switch lives in the More sheet — the header
@@ -145,16 +156,16 @@ export function AppLayout() {
               onClick={toggleTheme}
               title={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
               aria-label="Toggle dark mode"
-              className="hidden rounded-lg border border-slate-200 p-2 text-slate-500 transition-colors hover:bg-slate-100 hover:text-slate-700 dark:border-slate-700 dark:text-slate-300 dark:hover:bg-slate-800 dark:hover:text-slate-100 md:block"
+              className="hidden rounded-full border border-gray-200 p-2 text-gray-500 transition-colors hover:bg-gray-100 hover:text-gray-700 dark:border-gray-700 dark:text-gray-300 dark:hover:bg-gray-800 dark:hover:text-gray-100 md:block"
             >
               {theme === 'dark' ? <Sun size={18} /> : <Moon size={18} />}
             </button>
             <NotificationBell />
             <div className="hidden text-right sm:block">
-              <p className="text-sm font-medium text-slate-700 dark:text-slate-200">{user?.name}</p>
-              <p className="text-xs text-slate-400 dark:text-slate-500">{user?.email}</p>
+              <p className="text-sm font-medium text-gray-700 dark:text-gray-200">{user?.name}</p>
+              <p className="text-xs text-gray-400 dark:text-gray-500">{user?.email}</p>
             </div>
-            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-brand-100 font-semibold text-brand-700 dark:bg-brand-500/20 dark:text-brand-300">
+            <div className="bg-brand-gradient-br flex h-9 w-9 shrink-0 items-center justify-center rounded-full font-semibold text-white">
               {user?.name?.[0]?.toUpperCase()}
             </div>
           </div>
@@ -165,7 +176,7 @@ export function AppLayout() {
         </main>
 
         {/* Mobile tab bar: four destinations + More. */}
-        <nav className="fixed inset-x-0 bottom-0 z-20 flex border-t border-slate-200 bg-white pb-safe dark:border-slate-800 dark:bg-slate-900 md:hidden">
+        <nav className="fixed inset-x-0 bottom-0 z-20 flex border-t border-gray-200 bg-white/95 backdrop-blur pb-safe dark:border-gray-800 dark:bg-gray-900 md:hidden">
           {tabs.map((item) => (
             <NavLink
               key={item.to}
@@ -173,7 +184,7 @@ export function AppLayout() {
               end={item.to === '/'}
               className={({ isActive }) =>
                 `flex flex-1 flex-col items-center justify-center gap-0.5 py-2 text-[10px] font-medium ${
-                  isActive ? 'text-brand-600 dark:text-brand-400' : 'text-slate-500 dark:text-slate-400'
+                  isActive ? 'text-gray-950 dark:text-white' : 'text-gray-400 dark:text-gray-500'
                 }`
               }
             >
@@ -186,7 +197,7 @@ export function AppLayout() {
             aria-label="More"
             aria-expanded={moreOpen}
             className={`flex flex-1 flex-col items-center justify-center gap-0.5 py-2 text-[10px] font-medium ${
-              moreIsActive ? 'text-brand-600 dark:text-brand-400' : 'text-slate-500 dark:text-slate-400'
+              moreIsActive ? 'text-gray-950 dark:text-white' : 'text-gray-400 dark:text-gray-500'
             }`}
           >
             <MoreHorizontal size={20} />
@@ -207,8 +218,8 @@ export function AppLayout() {
               className={({ isActive }) =>
                 `flex min-h-20 flex-col items-center justify-center gap-1.5 rounded-xl border p-2 text-center text-xs font-medium transition-colors ${
                   isActive
-                    ? 'border-brand-500 bg-brand-50 text-brand-700 dark:border-brand-500 dark:bg-brand-500/15 dark:text-brand-300'
-                    : 'border-slate-200 bg-white text-slate-600 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300'
+                    ? 'border-gray-950 bg-gray-950 text-white dark:border-white dark:bg-white dark:text-gray-950'
+                    : 'border-gray-200 bg-white text-gray-700 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-300'
                 }`
               }
             >
@@ -218,23 +229,23 @@ export function AppLayout() {
           ))}
         </div>
 
-        <div className="mt-4 space-y-1 border-t border-slate-200 pt-3 dark:border-slate-700">
+        <div className="mt-4 space-y-1 border-t border-gray-200 pt-3 dark:border-gray-700">
           <div className="px-1 pb-2">
-            <p className="truncate text-sm font-medium text-slate-700 dark:text-slate-200">{user?.name}</p>
-            <p className="truncate text-xs text-slate-400 dark:text-slate-500">{user?.email}</p>
+            <p className="truncate text-sm font-medium text-gray-700 dark:text-gray-200">{user?.name}</p>
+            <p className="truncate text-xs text-gray-400 dark:text-gray-500">{user?.email}</p>
           </div>
           <button
             onClick={() => {
               setMoreOpen(false);
               setCustomizeOpen(true);
             }}
-            className="tap flex w-full items-center gap-3 rounded-lg px-3 py-3 text-left text-sm font-medium text-slate-600 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800"
+            className="tap flex w-full items-center gap-3 rounded-lg px-3 py-3 text-left text-sm font-medium text-gray-600 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-800"
           >
             <SlidersHorizontal size={18} /> Customize menu
           </button>
           <button
             onClick={toggleTheme}
-            className="tap flex w-full items-center gap-3 rounded-lg px-3 py-3 text-left text-sm font-medium text-slate-600 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800"
+            className="tap flex w-full items-center gap-3 rounded-lg px-3 py-3 text-left text-sm font-medium text-gray-600 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-800"
           >
             {theme === 'dark' ? <Sun size={18} /> : <Moon size={18} />}
             {theme === 'dark' ? 'Light mode' : 'Dark mode'}

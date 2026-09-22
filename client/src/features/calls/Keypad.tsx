@@ -83,11 +83,11 @@ export function Keypad({
             onContextMenu={(e) => plusKey && e.preventDefault()}
             aria-label={plusKey ? 'Key 0, hold for plus' : `Key ${digit}`}
             title={plusKey ? 'Hold for +' : undefined}
-            className={`flex touch-manipulation select-none flex-col items-center justify-center rounded-lg border border-slate-200 bg-white ${pad} leading-none transition-colors hover:bg-slate-50 active:bg-slate-100 disabled:cursor-not-allowed disabled:opacity-40 dark:border-slate-700 dark:bg-slate-800 dark:hover:bg-slate-700`}
+            className={`flex touch-manipulation select-none flex-col items-center justify-center rounded-lg border border-gray-200 bg-white ${pad} leading-none transition-colors hover:bg-gray-50 active:bg-gray-100 disabled:cursor-not-allowed disabled:opacity-40 dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-700`}
           >
-            <span className="text-xl font-semibold text-slate-800 dark:text-slate-100 md:text-lg">{digit}</span>
+            <span className="text-xl font-semibold text-gray-800 dark:text-gray-100 md:text-lg">{digit}</span>
             {letters && (
-              <span className="mt-0.5 text-[9px] font-medium tracking-wider text-slate-400 dark:text-slate-500">
+              <span className="mt-0.5 text-[9px] font-medium tracking-wider text-gray-400 dark:text-gray-500">
                 {letters}
               </span>
             )}

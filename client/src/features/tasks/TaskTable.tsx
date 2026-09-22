@@ -17,12 +17,12 @@ import {
 import type { Lead, Task, TaskStatus, TaskType, User } from '@/types';
 
 const CELL =
-  'rounded-md border border-slate-300 bg-white px-2 py-1 text-xs text-slate-700 outline-none transition-colors focus:border-brand-500 focus:ring-2 focus:ring-brand-100 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200 dark:focus:ring-brand-500/25';
+  'rounded-md border border-gray-300 bg-white px-2 py-1 text-xs text-gray-700 outline-none transition-colors focus:border-brand-500 focus:ring-2 focus:ring-brand-100 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-200 dark:focus:ring-brand-500/25';
 
 /** Same control, sized for a thumb — used everywhere the phone layout renders one. */
 const CELL_TOUCH = `${CELL} min-h-11 w-full truncate py-2 pl-2.5 pr-7 md:min-h-0 md:py-1 md:pr-2`;
 
-const TH = 'px-2.5 py-2 text-left text-[11px] font-semibold uppercase tracking-wide text-slate-400';
+const TH = 'px-2.5 py-2 text-left text-[11px] font-semibold uppercase tracking-wide text-gray-400';
 
 interface Props {
   tasks: Task[];
@@ -52,11 +52,11 @@ export function TaskTable({ tasks, isAdmin, people, openId, onOpenHandled }: Pro
     setOpen((cur) => (cur?.id === id && cur.mode === mode ? null : { id, mode }));
 
   return (
-    <div className="rounded-xl border border-slate-200 bg-white dark:border-slate-800 dark:bg-slate-900">
+    <div className="rounded-xl border border-gray-200 bg-white dark:border-gray-800 dark:bg-gray-900">
       {/* Phone: cards. The desktop grid is ~60rem wide — on a 390px screen that
           is a sideways scroll through eight columns of 11px selects, so the same
           controls are stacked here instead, at full tap size. */}
-      <div className="divide-y divide-slate-100 dark:divide-slate-800 md:hidden">
+      <div className="divide-y divide-gray-100 dark:divide-gray-800 md:hidden">
         {tasks.map((task) => (
           <TaskCard
             key={task._id}
@@ -73,8 +73,8 @@ export function TaskTable({ tasks, isAdmin, people, openId, onOpenHandled }: Pro
       {/* Desktop table */}
       <div className="hidden overflow-x-auto md:block">
         <table className="w-full min-w-[66rem] border-collapse">
-          <thead className="sticky top-0 z-10 bg-slate-50 dark:bg-slate-800/70">
-            <tr className="border-b border-slate-200 dark:border-slate-700">
+          <thead className="sticky top-0 z-10 bg-gray-50 dark:bg-gray-800/70">
+            <tr className="border-b border-gray-200 dark:border-gray-700">
               <th className={`${TH} w-9`}>
                 <span className="sr-only">Done</span>
               </th>
@@ -187,13 +187,13 @@ function TaskCard({
   }, [open]);
 
   return (
-    <div className={`p-3 ${open ? 'bg-slate-50 dark:bg-slate-800/40' : ''}`}>
+    <div className={`p-3 ${open ? 'bg-gray-50 dark:bg-gray-800/40' : ''}`}>
       <div className="flex items-start gap-2">
         <button
           onClick={() => (isOpen ? onToggle('complete') : setStatus('pending'))}
           aria-label={isOpen ? `Mark ${task.title} as done` : `Reopen ${task.title}`}
           className={`tap -m-1 flex shrink-0 items-center justify-center rounded-full p-1 ${
-            done ? 'text-emerald-500' : 'text-slate-300 dark:text-slate-600'
+            done ? 'text-emerald-500' : 'text-gray-300 dark:text-gray-600'
           }`}
         >
           {done ? <CheckCircle2 size={24} /> : <Circle size={24} />}
@@ -202,13 +202,13 @@ function TaskCard({
         <button onClick={() => onToggle('details')} className="min-w-0 flex-1 text-left">
           <span
             className={`line-clamp-2 text-sm font-medium ${
-              done ? 'text-slate-400 line-through dark:text-slate-500' : 'text-slate-800 dark:text-slate-100'
+              done ? 'text-gray-400 line-through dark:text-gray-500' : 'text-gray-800 dark:text-gray-100'
             }`}
           >
             {task.title}
           </span>
           {task.description && (
-            <span className="mt-0.5 line-clamp-1 block text-xs text-slate-400 dark:text-slate-500">
+            <span className="mt-0.5 line-clamp-1 block text-xs text-gray-400 dark:text-gray-500">
               {task.description}
             </span>
           )}
@@ -218,7 +218,7 @@ function TaskCard({
           onClick={() => onToggle('details')}
           aria-label={`Details for ${task.title}`}
           aria-expanded={open === 'details'}
-          className="tap -mr-1 flex shrink-0 items-center justify-center rounded-lg text-slate-400"
+          className="tap -mr-1 flex shrink-0 items-center justify-center rounded-lg text-gray-400"
         >
           <ChevronDown size={20} className={open === 'details' ? 'rotate-180' : ''} />
         </button>
@@ -229,13 +229,13 @@ function TaskCard({
           className={`rounded-full px-2 py-0.5 font-medium tabular-nums ${
             overdue
               ? 'bg-rose-100 text-rose-700 dark:bg-rose-500/15 dark:text-rose-300'
-              : 'bg-slate-100 text-slate-500 dark:bg-slate-800 dark:text-slate-400'
+              : 'bg-gray-100 text-gray-500 dark:bg-gray-800 dark:text-gray-400'
           }`}
         >
           {fmtDueLabel(task.dueDate)}
         </span>
         <span
-          className="rounded-full bg-slate-100 px-2 py-0.5 tabular-nums text-slate-500 dark:bg-slate-800 dark:text-slate-400"
+          className="rounded-full bg-gray-100 px-2 py-0.5 tabular-nums text-gray-500 dark:bg-gray-800 dark:text-gray-400"
           title={`Assigned ${fmtDateTime(assignedOn(task))}`}
         >
           Assigned {fmtStamp(assignedOn(task))}
@@ -247,12 +247,12 @@ function TaskCard({
           {TASK_STATUS_LABELS[task.status]}
         </span>
         {task.type !== 'custom' && (
-          <span className="rounded-full bg-slate-100 px-2 py-0.5 text-slate-500 dark:bg-slate-800 dark:text-slate-400">
+          <span className="rounded-full bg-gray-100 px-2 py-0.5 text-gray-500 dark:bg-gray-800 dark:text-gray-400">
             {TASK_TYPE_LABELS[task.type]}
           </span>
         )}
         {lead && (
-          <span className="inline-flex items-center gap-1 text-slate-400 dark:text-slate-500">
+          <span className="inline-flex items-center gap-1 text-gray-400 dark:text-gray-500">
             <Link2 size={10} /> {lead.name}
           </span>
         )}
@@ -265,7 +265,7 @@ function TaskCard({
         </p>
       )}
       {task.status === 'cancelled' && (
-        <p className="mt-1.5 inline-flex items-center gap-1 pl-7 text-[11px] text-slate-400">
+        <p className="mt-1.5 inline-flex items-center gap-1 pl-7 text-[11px] text-gray-400">
           <XCircle size={12} /> Cancelled
         </p>
       )}
@@ -301,14 +301,14 @@ function TaskCard({
             <button
               onClick={remove}
               aria-label={`Delete ${task.title}`}
-              className="tap flex shrink-0 items-center justify-center rounded-lg border border-slate-200 px-3 text-slate-400 dark:border-slate-700"
+              className="tap flex shrink-0 items-center justify-center rounded-lg border border-gray-200 px-3 text-gray-400 dark:border-gray-700"
             >
               <Trash2 size={16} />
             </button>
           </>
         )}
         {!isAdmin && assignee && (
-          <span className="shrink-0 text-[11px] text-slate-400 dark:text-slate-500">{assignee.name}</span>
+          <span className="shrink-0 text-[11px] text-gray-400 dark:text-gray-500">{assignee.name}</span>
         )}
       </div>
 
@@ -319,7 +319,7 @@ function TaskCard({
           </div>
         )}
         {open === 'details' && (
-          <div className="mt-2.5 rounded-xl border border-slate-200 bg-slate-50 p-3 dark:border-slate-700 dark:bg-slate-800/30">
+          <div className="mt-2.5 rounded-xl border border-gray-200 bg-gray-50 p-3 dark:border-gray-700 dark:bg-gray-800/30">
             <DetailsPanel task={task} isAdmin={isAdmin} onClose={onClose} />
           </div>
         )}
@@ -359,8 +359,8 @@ function TaskRow({
   return (
     <>
       <tr
-        className={`border-b border-slate-100 transition-colors hover:bg-slate-50 dark:border-slate-800 dark:hover:bg-slate-800/40 ${
-          open ? 'bg-slate-50 dark:bg-slate-800/40' : ''
+        className={`border-b border-gray-100 transition-colors hover:bg-gray-50 dark:border-gray-800 dark:hover:bg-gray-800/40 ${
+          open ? 'bg-gray-50 dark:bg-gray-800/40' : ''
         }`}
       >
         <td className="px-2.5 py-2 align-top">
@@ -371,7 +371,7 @@ function TaskRow({
             className={`rounded-full p-1 transition-colors ${
               done
                 ? 'text-emerald-500 hover:text-emerald-600'
-                : 'text-slate-300 hover:text-emerald-500 dark:text-slate-600 dark:hover:text-emerald-400'
+                : 'text-gray-300 hover:text-emerald-500 dark:text-gray-600 dark:hover:text-emerald-400'
             }`}
           >
             {done ? <CheckCircle2 size={18} /> : <Circle size={18} />}
@@ -382,12 +382,12 @@ function TaskRow({
           <button onClick={() => onToggle('details')} className="block w-full text-left" title={task.title}>
             <span
               className={`line-clamp-2 text-sm font-medium ${
-                done ? 'text-slate-400 line-through dark:text-slate-500' : 'text-slate-800 dark:text-slate-100'
+                done ? 'text-gray-400 line-through dark:text-gray-500' : 'text-gray-800 dark:text-gray-100'
               }`}
             >
               {task.title}
             </span>
-            <span className="mt-0.5 flex flex-wrap items-center gap-x-2 gap-y-0.5 text-[11px] text-slate-400 dark:text-slate-500">
+            <span className="mt-0.5 flex flex-wrap items-center gap-x-2 gap-y-0.5 text-[11px] text-gray-400 dark:text-gray-500">
               {task.type !== 'custom' && <span>{TASK_TYPE_LABELS[task.type]}</span>}
               {task.description && <span className="line-clamp-1 max-w-md">{task.description}</span>}
               {task.relatedLead && typeof task.relatedLead === 'object' && (
@@ -419,7 +419,7 @@ function TaskRow({
 
         <td className="px-2.5 py-2 align-top">
           <span
-            className="whitespace-nowrap text-xs tabular-nums text-slate-500 dark:text-slate-400"
+            className="whitespace-nowrap text-xs tabular-nums text-gray-500 dark:text-gray-400"
             title={fmtDateTime(assignedOn(task))}
           >
             {fmtStamp(assignedOn(task))}
@@ -429,7 +429,7 @@ function TaskRow({
         <td className="px-2.5 py-2 align-top">
           <span
             className={`text-xs tabular-nums ${
-              overdue ? 'font-semibold text-rose-500' : 'text-slate-500 dark:text-slate-400'
+              overdue ? 'font-semibold text-rose-500' : 'text-gray-500 dark:text-gray-400'
             }`}
           >
             {fmtDueLabel(task.dueDate)}
@@ -476,15 +476,15 @@ function TaskRow({
             <span className="whitespace-nowrap text-xs tabular-nums text-emerald-600 dark:text-emerald-400">
               {fmtStamp(task.completedAt)}
               {task.timeSpentMin ? (
-                <span className="block text-[11px] text-slate-400">took {fmtMinutes(task.timeSpentMin)}</span>
+                <span className="block text-[11px] text-gray-400">took {fmtMinutes(task.timeSpentMin)}</span>
               ) : null}
             </span>
           ) : task.status === 'cancelled' ? (
-            <span className="inline-flex items-center gap-1 text-xs text-slate-400">
+            <span className="inline-flex items-center gap-1 text-xs text-gray-400">
               <XCircle size={12} /> Cancelled
             </span>
           ) : (
-            <span className="text-xs text-slate-300 dark:text-slate-600">—</span>
+            <span className="text-xs text-gray-300 dark:text-gray-600">—</span>
           )}
         </td>
 
@@ -494,7 +494,7 @@ function TaskRow({
               onClick={() => onToggle('details')}
               aria-label={`Details for ${task.title}`}
               aria-expanded={open === 'details'}
-              className="rounded p-1 text-slate-400 transition-transform hover:bg-slate-100 hover:text-slate-600 dark:hover:bg-slate-800"
+              className="rounded p-1 text-gray-400 transition-transform hover:bg-gray-100 hover:text-gray-600 dark:hover:bg-gray-800"
             >
               <ChevronDown size={15} className={open === 'details' ? 'rotate-180' : ''} />
             </button>
@@ -502,7 +502,7 @@ function TaskRow({
               <button
                 onClick={remove}
                 aria-label={`Delete ${task.title}`}
-                className="rounded p-1 text-slate-400 hover:bg-rose-50 hover:text-rose-500 dark:hover:bg-rose-500/10"
+                className="rounded p-1 text-gray-400 hover:bg-rose-50 hover:text-rose-500 dark:hover:bg-rose-500/10"
               >
                 <Trash2 size={15} />
               </button>
@@ -512,7 +512,7 @@ function TaskRow({
       </tr>
 
       {open === 'complete' && (
-        <tr className="border-b border-slate-100 bg-emerald-50/50 dark:border-slate-800 dark:bg-emerald-500/5">
+        <tr className="border-b border-gray-100 bg-emerald-50/50 dark:border-gray-800 dark:bg-emerald-500/5">
           <td colSpan={cols} className="px-3 py-3">
             <CompletionStrip task={task} onClose={onClose} />
           </td>
@@ -520,7 +520,7 @@ function TaskRow({
       )}
 
       {open === 'details' && (
-        <tr className="border-b border-slate-100 bg-slate-50 dark:border-slate-800 dark:bg-slate-800/30">
+        <tr className="border-b border-gray-100 bg-gray-50 dark:border-gray-800 dark:bg-gray-800/30">
           <td colSpan={cols} className="px-3 py-3">
             <DetailsPanel task={task} isAdmin={isAdmin} onClose={onClose} />
           </td>
@@ -580,7 +580,7 @@ function CompletionStrip({ task, onClose }: { task: Task; onClose: () => void })
     return d !== null && (d.getTime() >= createdOn.getTime() || sameDay(d, createdOn));
   });
 
-  const label = 'mb-1 block text-[11px] font-medium text-slate-500 dark:text-slate-400';
+  const label = 'mb-1 block text-[11px] font-medium text-gray-500 dark:text-gray-400';
 
   return (
     <div className="space-y-3 md:flex md:flex-wrap md:items-start md:gap-3 md:space-y-0">
@@ -604,7 +604,7 @@ function CompletionStrip({ task, onClose }: { task: Task; onClose: () => void })
               <button
                 key={q.label}
                 onClick={() => setWhen(localDateInput(new Date(), q.daysAgo))}
-                className="rounded-full border border-slate-200 px-3 py-1 text-[11px] text-slate-500 hover:bg-white dark:border-slate-700 dark:text-slate-400 dark:hover:bg-slate-800 md:px-2 md:py-0.5"
+                className="rounded-full border border-gray-200 px-3 py-1 text-[11px] text-gray-500 hover:bg-white dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-800 md:px-2 md:py-0.5"
               >
                 {q.label}
               </button>
@@ -628,7 +628,7 @@ function CompletionStrip({ task, onClose }: { task: Task; onClose: () => void })
               placeholder="0"
               className={`${CELL_TOUCH} pr-8 tabular-nums md:w-24 md:py-1.5`}
             />
-            <span className="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2 text-[11px] text-slate-400">
+            <span className="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2 text-[11px] text-gray-400">
               min
             </span>
           </div>
@@ -652,7 +652,7 @@ function CompletionStrip({ task, onClose }: { task: Task; onClose: () => void })
       <div className="flex gap-2 md:pt-[22px]">
         <button
           onClick={onClose}
-          className="min-h-11 flex-1 rounded-lg border border-slate-300 px-3 py-1.5 text-xs font-medium text-slate-600 hover:bg-white dark:border-slate-700 dark:text-slate-300 dark:hover:bg-slate-800 md:min-h-0 md:flex-none md:rounded-md"
+          className="min-h-11 flex-1 rounded-lg border border-gray-300 px-3 py-1.5 text-xs font-medium text-gray-600 hover:bg-white dark:border-gray-700 dark:text-gray-300 dark:hover:bg-gray-800 md:min-h-0 md:flex-none md:rounded-md"
         >
           Cancel
         </button>
@@ -708,7 +708,7 @@ function DetailsPanel({ task, isAdmin, onClose }: { task: Task; isAdmin: boolean
 
   const lead = task.relatedLead && typeof task.relatedLead === 'object' ? (task.relatedLead as Lead) : null;
   const nameOf = (r?: User | string | null) => (r && typeof r === 'object' ? r.name : '—');
-  const label = 'mb-1 block text-[11px] font-medium text-slate-500 dark:text-slate-400';
+  const label = 'mb-1 block text-[11px] font-medium text-gray-500 dark:text-gray-400';
 
   return (
     <div className="space-y-3">
@@ -771,16 +771,16 @@ function DetailsPanel({ task, isAdmin, onClose }: { task: Task; isAdmin: boolean
           <button
             onClick={save}
             disabled={!dirty || update.isPending}
-            className="min-h-11 w-full rounded-lg bg-brand-600 px-3 py-1.5 text-xs font-medium text-white hover:bg-brand-700 disabled:opacity-50 md:mt-[22px] md:min-h-0 md:w-auto md:rounded-md"
+            className="min-h-11 w-full rounded-btn bg-gray-950 px-3 py-1.5 text-xs font-medium text-white hover:bg-gray-800 dark:bg-white dark:text-gray-950 dark:hover:bg-gray-200 disabled:opacity-50 md:mt-[22px] md:min-h-0 md:w-auto md:rounded-md"
           >
             {update.isPending ? 'Saving…' : 'Save'}
           </button>
         </div>
       ) : (
-        task.description && <p className="text-sm text-slate-600 dark:text-slate-300">{task.description}</p>
+        task.description && <p className="text-sm text-gray-600 dark:text-gray-300">{task.description}</p>
       )}
 
-      <div className="flex flex-wrap gap-x-6 gap-y-1 text-[11px] text-slate-400 dark:text-slate-500">
+      <div className="flex flex-wrap gap-x-6 gap-y-1 text-[11px] text-gray-400 dark:text-gray-500">
         <span>Assigned by {nameOf(task.assignedBy)}</span>
         <span>Assigned {fmtStamp(assignedOn(task))}</span>
         {assignedOn(task) !== task.createdAt && <span>Created {fmtStamp(task.createdAt)}</span>}

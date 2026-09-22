@@ -212,6 +212,20 @@ errors → `{ success: false, message, details? }` via the central `errorHandler
   that already includes the country code without '+' (e.g. `14102927721`) isn't double-prefixed.
 - `@/` is aliased to `client/src/`.
 
+## Theme (matches nextgenfusion.in)
+
+- **Font:** Trap, the site's typeface, self-hosted in `client/public/fonts` (`@font-face` in
+  `index.css`) and set as Tailwind's `font-sans`. It has no ₹ or emoji; those fall back to Inter/system.
+- **Neutrals are `gray-*`, never `slate-*`** (the site uses Tailwind gray). Canvas `gray-50`, cards
+  white with a `gray-200` border and `rounded-2xl`; dark mode is `gray-950`/`gray-900`.
+- **Primary actions are black** (`bg-gray-950 text-white`, inverted to white in dark mode) with
+  `rounded-btn` (10px), like the site's "Book a Free Call". Active nav items / tabs / chips use the
+  same black fill. Don't use `bg-brand-600` for buttons.
+- **Brand gradient** `#2B35AB → #8A38F5 → #13CBD4` (`bg-brand-gradient`, `bg-brand-gradient-br`,
+  `.text-gradient`) is the accent for headline numbers (`StatCard`), the avatar, toggles, progress
+  bars and the login headline. `brand-*` (indigo) stays for focus rings, links and icon tints;
+  `fusion.violet` / `fusion.cyan` are the other stops. Chart palettes lead with those three.
+
 ## Mobile (the app is used on phones)
 
 Every screen and every action has to work one-handed on a ~390px phone. The rule

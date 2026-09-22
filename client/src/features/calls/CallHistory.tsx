@@ -52,10 +52,10 @@ function AudioPlayer({ src }: { src: string }) {
   }
 
   return (
-    <div className="flex w-full items-center gap-2 rounded-full bg-slate-100 px-2 py-1 dark:bg-slate-700/60 sm:w-80">
+    <div className="flex w-full items-center gap-2 rounded-full bg-gray-100 px-2 py-1 dark:bg-gray-700/60 sm:w-80">
       <button
         onClick={toggle}
-        className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-brand-600 text-white hover:bg-brand-700"
+        className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-gray-950 text-white hover:bg-gray-800 dark:bg-white dark:text-gray-950"
         title={playing ? 'Pause' : 'Play'}
       >
         {playing ? <Pause size={14} /> : <Play size={14} />}
@@ -63,9 +63,9 @@ function AudioPlayer({ src }: { src: string }) {
 
       {/* Seek bar — visual track + fill + knob, with an invisible range on top for dragging. */}
       <div className="relative h-4 flex-1">
-        <div className="absolute inset-x-0 top-1/2 h-1.5 -translate-y-1/2 rounded-full bg-slate-300 dark:bg-slate-600" />
+        <div className="absolute inset-x-0 top-1/2 h-1.5 -translate-y-1/2 rounded-full bg-gray-300 dark:bg-gray-600" />
         <div
-          className="absolute top-1/2 h-1.5 -translate-y-1/2 rounded-full bg-brand-600"
+          className="absolute top-1/2 h-1.5 -translate-y-1/2 rounded-full bg-brand-gradient"
           style={{ width: `${pct}%` }}
         />
         <div
@@ -84,7 +84,7 @@ function AudioPlayer({ src }: { src: string }) {
         />
       </div>
 
-      <span className="shrink-0 text-[10px] tabular-nums text-slate-500 dark:text-slate-400">
+      <span className="shrink-0 text-[10px] tabular-nums text-gray-500 dark:text-gray-400">
         {fmtTime(cur)} / {fmtTime(dur)}
       </span>
       <audio
@@ -136,28 +136,28 @@ export function CallHistory({ leadId }: { leadId: string }) {
 
   return (
     <div>
-      <p className="mb-1 flex items-center gap-1.5 text-xs font-semibold text-slate-500 dark:text-slate-400">
+      <p className="mb-1 flex items-center gap-1.5 text-xs font-semibold text-gray-500 dark:text-gray-400">
         <Mic size={13} /> Calls &amp; recordings
       </p>
       {isLoading ? (
         <Spinner />
       ) : !calls.length ? (
-        <p className="text-xs text-slate-400 dark:text-slate-500">No calls logged yet.</p>
+        <p className="text-xs text-gray-400 dark:text-gray-500">No calls logged yet.</p>
       ) : (
         <div className="max-h-48 space-y-1.5 overflow-y-auto">
           {calls.map((c) => (
             <div
               key={c._id}
-              className="flex flex-wrap items-center justify-between gap-2 rounded-lg bg-white p-2 dark:bg-slate-800"
+              className="flex flex-wrap items-center justify-between gap-2 rounded-lg bg-white p-2 dark:bg-gray-800"
             >
               <div className="min-w-0">
-                <p className="text-xs font-medium text-slate-700 dark:text-slate-200">
+                <p className="text-xs font-medium text-gray-700 dark:text-gray-200">
                   {callLogOutcomeLabel(c.disposition, c.callStatus)}
-                  <span className="ml-1.5 font-normal text-slate-400 dark:text-slate-500">
+                  <span className="ml-1.5 font-normal text-gray-400 dark:text-gray-500">
                     · {fmtDuration(c.durationSec)}
                   </span>
                 </p>
-                <p className="text-[10px] text-slate-400 dark:text-slate-500">
+                <p className="text-[10px] text-gray-400 dark:text-gray-500">
                   {calledNumber(c) && <span>{calledNumber(c)} · </span>}
                   {fmtDateTime(c.createdAt)}
                 </p>
@@ -165,7 +165,7 @@ export function CallHistory({ leadId }: { leadId: string }) {
               {c.recordingUrl ? (
                 <RecordingPlayer callId={c._id} />
               ) : (
-                <span className="text-[10px] text-slate-400 dark:text-slate-500">No recording</span>
+                <span className="text-[10px] text-gray-400 dark:text-gray-500">No recording</span>
               )}
             </div>
           ))}

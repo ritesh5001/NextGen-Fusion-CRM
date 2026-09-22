@@ -2,6 +2,38 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Trap — the nextgenfusion.in typeface. Self-hosted so the CRM matches the
+   site without depending on its build hashes. Glyphs it lacks (₹, emoji) fall
+   through to Inter / the system font. */
+@font-face {
+  font-family: 'Trap';
+  src: url('/fonts/trap-400.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Trap';
+  src: url('/fonts/trap-500.woff2') format('woff2');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Trap';
+  src: url('/fonts/trap-600.woff2') format('woff2');
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Trap';
+  src: url('/fonts/trap-700.woff2') format('woff2');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
 html,
 body,
 #root {
@@ -15,7 +47,7 @@ html {
 }
 
 body {
-  @apply bg-slate-100 text-slate-800 antialiased;
+  @apply bg-gray-50 font-sans text-gray-900 antialiased;
   /* Nothing in the app is meant to scroll sideways at the page level — any
      overflow is a bug, and clipping it here keeps a stray wide cell from
      letting the whole layout slide around under a thumb. */
@@ -25,7 +57,7 @@ body {
 }
 
 .dark body {
-  @apply bg-slate-950 text-slate-100;
+  @apply bg-gray-950 text-gray-100;
 }
 
 /* Let the browser theme native form controls, scrollbars & date pickers. */
@@ -59,6 +91,11 @@ body,
 }
 
 @layer utilities {
+  /* The site's headline treatment: indigo → violet → cyan clipped to text. */
+  .text-gradient {
+    @apply bg-brand-gradient bg-clip-text text-transparent;
+  }
+
   /* Comfortable minimum tap area (Apple 44pt / Material 48dp) applied only on
      touch pointers, so the desktop UI keeps its dense icon buttons. */
   @media (pointer: coarse) {

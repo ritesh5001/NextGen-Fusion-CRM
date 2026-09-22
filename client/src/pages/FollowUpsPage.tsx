@@ -43,7 +43,7 @@ export function FollowUpsPage() {
 
   return (
     <div className="space-y-4">
-      <h1 className="text-xl font-bold text-slate-800 dark:text-slate-100">Follow-ups</h1>
+      <h1 className="text-xl font-bold text-gray-800 dark:text-gray-100">Follow-ups</h1>
 
       <div className="flex flex-wrap gap-2">
         {SCOPES.map((s) => (
@@ -52,8 +52,8 @@ export function FollowUpsPage() {
             onClick={() => setScope(s.key)}
             className={`min-h-11 flex-1 rounded-lg px-3 py-1.5 text-sm font-medium sm:min-h-0 sm:flex-none ${
               scope === s.key
-                ? 'bg-brand-600 text-white'
-                : 'bg-white text-slate-600 border border-slate-200 dark:bg-slate-900 dark:text-slate-300 dark:border-slate-700'
+                ? 'bg-gray-950 text-white dark:bg-white dark:text-gray-950'
+                : 'bg-white text-gray-600 border border-gray-200 dark:bg-gray-900 dark:text-gray-300 dark:border-gray-700'
             }`}
           >
             {s.label}
@@ -67,7 +67,7 @@ export function FollowUpsPage() {
         ) : !data?.data.length ? (
           <EmptyState title="No follow-ups" hint="You're all caught up here." />
         ) : (
-          <div className="divide-y divide-slate-100 dark:divide-slate-800">
+          <div className="divide-y divide-gray-100 dark:divide-gray-800">
             {data.data.map((f) => {
               const lead = f.lead as Lead;
               const overdue = isOverdue(f.scheduledAt);
@@ -75,14 +75,14 @@ export function FollowUpsPage() {
                 <div key={f._id} className="flex flex-col gap-3 p-3 sm:flex-row sm:flex-wrap sm:items-center sm:p-4">
                   <div className="min-w-0 flex-1">
                     <div className="flex items-center gap-2">
-                      <p className="font-medium text-slate-800 dark:text-slate-100">{lead?.name}</p>
+                      <p className="font-medium text-gray-800 dark:text-gray-100">{lead?.name}</p>
                       {overdue && <Badge className="bg-rose-100 text-rose-700">Overdue</Badge>}
                     </div>
-                    <p className="text-sm text-slate-500 dark:text-slate-400">
+                    <p className="text-sm text-gray-500 dark:text-gray-400">
                       {formatPhoneDisplay(lead?.phone, lead?.country)}
                     </p>
-                    <p className="text-xs text-slate-400 dark:text-slate-500">Scheduled {fmtDateTime(f.scheduledAt)}</p>
-                    {f.notes && <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">“{f.notes}”</p>}
+                    <p className="text-xs text-gray-400 dark:text-gray-500">Scheduled {fmtDateTime(f.scheduledAt)}</p>
+                    {f.notes && <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">“{f.notes}”</p>}
                   </div>
                   <div className="flex gap-1.5 [&>*]:flex-1 sm:[&>*]:flex-none">
                     {lead?.phone && (

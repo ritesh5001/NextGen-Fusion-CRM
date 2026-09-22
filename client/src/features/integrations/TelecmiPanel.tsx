@@ -90,12 +90,12 @@ function AgentAssignmentCard() {
   return (
     <Card className="space-y-4 p-5">
       <div className="flex items-center gap-3">
-        <span className="rounded-lg bg-slate-100 p-2 text-slate-600 dark:bg-slate-800 dark:text-slate-300">
+        <span className="rounded-lg bg-gray-100 p-2 text-gray-600 dark:bg-gray-800 dark:text-gray-300">
           <UsersIcon size={18} />
         </span>
         <div>
-          <h3 className="font-semibold text-slate-800 dark:text-slate-100">TeleCMI agents</h3>
-          <p className="text-xs text-slate-500 dark:text-slate-400">
+          <h3 className="font-semibold text-gray-800 dark:text-gray-100">TeleCMI agents</h3>
+          <p className="text-xs text-gray-500 dark:text-gray-400">
             Each telecaller needs their own TeleCMI agent to call. Passwords are stored write-only.
           </p>
         </div>
@@ -104,9 +104,9 @@ function AgentAssignmentCard() {
       {telecallers.isLoading ? (
         <Spinner />
       ) : users.length === 0 ? (
-        <p className="text-sm text-slate-500 dark:text-slate-400">No telecallers yet. Add users first.</p>
+        <p className="text-sm text-gray-500 dark:text-gray-400">No telecallers yet. Add users first.</p>
       ) : (
-        <div className="divide-y divide-slate-100 dark:divide-slate-800">
+        <div className="divide-y divide-gray-100 dark:divide-gray-800">
           {users.map((u) => {
             const current = u.telecmiUserId ?? '';
             const draft = draftFor(u._id, current);
@@ -114,8 +114,8 @@ function AgentAssignmentCard() {
             return (
               <div key={u._id} className="flex flex-col gap-2 py-3 sm:flex-row sm:flex-wrap sm:items-end sm:justify-between sm:gap-3">
                 <div className="min-w-0 flex-1">
-                  <p className="truncate text-sm font-medium text-slate-700 dark:text-slate-200">{u.name}</p>
-                  <p className="truncate text-xs text-slate-400 dark:text-slate-500">{u.email}</p>
+                  <p className="truncate text-sm font-medium text-gray-700 dark:text-gray-200">{u.name}</p>
+                  <p className="truncate text-xs text-gray-400 dark:text-gray-500">{u.email}</p>
                 </div>
                 <div className="grid grid-cols-2 items-end gap-2 sm:flex sm:flex-wrap">
                   <div>
@@ -257,8 +257,8 @@ export function TelecmiPanel() {
               <PhoneCall size={20} />
             </span>
             <div>
-              <h2 className="font-semibold text-slate-800 dark:text-slate-100">TeleCMI — Browser calling</h2>
-              <p className="text-xs text-slate-500 dark:text-slate-400">
+              <h2 className="font-semibold text-gray-800 dark:text-gray-100">TeleCMI — Browser calling</h2>
+              <p className="text-xs text-gray-500 dark:text-gray-400">
                 Alternative calling backend. Telecallers can dial from the browser or have TeleCMI ring their phone.
               </p>
             </div>
@@ -274,20 +274,20 @@ export function TelecmiPanel() {
           )}
         </div>
 
-        <div className="space-y-3 rounded-xl border border-slate-200 p-4 dark:border-slate-700">
+        <div className="space-y-3 rounded-xl border border-gray-200 p-4 dark:border-gray-700">
           <div className="flex items-center justify-between gap-3">
             <div>
-              <p className="text-sm font-medium text-slate-700 dark:text-slate-200">Enable TeleCMI calling</p>
-              <p className="text-xs text-slate-500 dark:text-slate-400">
+              <p className="text-sm font-medium text-gray-700 dark:text-gray-200">Enable TeleCMI calling</p>
+              <p className="text-xs text-gray-500 dark:text-gray-400">
                 Makes TeleCMI selectable by telecallers who have an agent assigned.
               </p>
             </div>
             <Toggle checked={form.enabled} onChange={(v) => set('enabled', v)} />
           </div>
-          <div className="flex items-center justify-between gap-3 border-t border-slate-100 pt-3 dark:border-slate-800">
+          <div className="flex items-center justify-between gap-3 border-t border-gray-100 pt-3 dark:border-gray-800">
             <div>
-              <p className="text-sm font-medium text-slate-700 dark:text-slate-200">Record calls</p>
-              <p className="text-xs text-slate-500 dark:text-slate-400">
+              <p className="text-sm font-medium text-gray-700 dark:text-gray-200">Record calls</p>
+              <p className="text-xs text-gray-500 dark:text-gray-400">
                 Recordings are fetched back through the server, so credentials never reach the browser.
               </p>
             </div>
@@ -331,7 +331,7 @@ export function TelecmiPanel() {
               <Button variant="secondary" onClick={handleDetect} disabled={detect.isPending || !form.appId}>
                 {detect.isPending ? 'Testing…' : 'Test & detect'}
               </Button>
-              <p className="text-[11px] text-slate-400 dark:text-slate-500">
+              <p className="text-[11px] text-gray-400 dark:text-gray-500">
                 Every API endpoint differs between the two. Enter your App ID + secret and press this to
                 find out which one your account is on.
               </p>
@@ -366,9 +366,9 @@ export function TelecmiPanel() {
         </div>
 
         {/* The one URL the admin has to paste into the PIOPIY dashboard. */}
-        <div className="rounded-xl border border-slate-200 p-4 dark:border-slate-700">
+        <div className="rounded-xl border border-gray-200 p-4 dark:border-gray-700">
           <Label>CDR webhook URL</Label>
-          <p className="mb-2 text-xs text-slate-500 dark:text-slate-400">
+          <p className="mb-2 text-xs text-gray-500 dark:text-gray-400">
             In the TeleCMI dashboard (Connle) go to <strong>Settings → Webhooks</strong>, pick your business
             number, click add, set the type to <strong>call report</strong> and the method to <strong>POST</strong>,
             then paste this URL. Call records and recordings arrive here when a call ends.

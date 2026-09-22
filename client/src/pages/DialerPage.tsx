@@ -69,10 +69,10 @@ export function DialerPage() {
   return (
     <div className="space-y-4">
       <div>
-        <h1 className="flex items-center gap-2 text-xl font-bold text-slate-800 dark:text-slate-100">
+        <h1 className="flex items-center gap-2 text-xl font-bold text-gray-800 dark:text-gray-100">
           <Phone size={20} /> Dialer
         </h1>
-        <p className="mt-0.5 hidden text-sm text-slate-500 dark:text-slate-400 sm:block">
+        <p className="mt-0.5 hidden text-sm text-gray-500 dark:text-gray-400 sm:block">
           Call any number. You can save it as a contact after the call.
         </p>
       </div>
@@ -96,7 +96,7 @@ export function DialerPage() {
             placeholder="Enter a number"
             inputMode="tel"
             aria-label="Phone number"
-            className="w-full bg-transparent text-center text-2xl font-semibold tracking-wider text-slate-800 outline-none placeholder:text-lg placeholder:font-normal placeholder:tracking-normal placeholder:text-slate-400 dark:text-slate-100"
+            className="w-full bg-transparent text-center text-2xl font-semibold tracking-wider text-gray-800 outline-none placeholder:text-lg placeholder:font-normal placeholder:tracking-normal placeholder:text-gray-400 dark:text-gray-100"
           />
           <div className="mt-1 flex min-h-4 items-center justify-center px-1 text-center">
             {needsCountryCode ? (
@@ -106,7 +106,7 @@ export function DialerPage() {
             ) : typed && !valid ? (
               <span className="text-xs text-rose-600">Not a valid number</span>
             ) : valid && e164 !== typed ? (
-              <span className="text-xs text-slate-400 dark:text-slate-500">Dials as {e164}</span>
+              <span className="text-xs text-gray-400 dark:text-gray-500">Dials as {e164}</span>
             ) : null}
           </div>
         </div>

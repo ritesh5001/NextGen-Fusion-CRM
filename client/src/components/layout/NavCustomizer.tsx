@@ -49,14 +49,14 @@ export function NavCustomizer({ role, open, onClose }: { role: Role; open: boole
     >
       <div className="space-y-6">
         <section>
-          <h4 className="text-[11px] font-semibold uppercase tracking-wide text-slate-400 dark:text-slate-500">
+          <h4 className="text-[11px] font-semibold uppercase tracking-wide text-gray-400 dark:text-gray-500">
             Pages in your menu
           </h4>
-          <p className="mb-2 mt-0.5 text-xs text-slate-500 dark:text-slate-400">
+          <p className="mb-2 mt-0.5 text-xs text-gray-500 dark:text-gray-400">
             Switch off anything you don't use. It leaves the sidebar and the More menu — the page itself
             keeps working if you follow a link to it.
           </p>
-          <div className="divide-y divide-slate-100 rounded-xl border border-slate-200 dark:divide-slate-800 dark:border-slate-700">
+          <div className="divide-y divide-gray-100 rounded-xl border border-gray-200 dark:divide-gray-800 dark:border-gray-700">
             {items.map((item) => {
               const on = !hidden.includes(item.to);
               // Never let someone empty their own menu and get stranded.
@@ -66,8 +66,8 @@ export function NavCustomizer({ role, open, onClose }: { role: Role; open: boole
                   key={item.to}
                   className={`flex items-center gap-3 px-3 py-2.5 ${last ? 'opacity-60' : 'cursor-pointer'}`}
                 >
-                  <item.icon size={18} className="shrink-0 text-slate-400 dark:text-slate-500" />
-                  <span className="min-w-0 flex-1 truncate text-sm font-medium text-slate-700 dark:text-slate-200">
+                  <item.icon size={18} className="shrink-0 text-gray-400 dark:text-gray-500" />
+                  <span className="min-w-0 flex-1 truncate text-sm font-medium text-gray-700 dark:text-gray-200">
                     {item.label}
                   </span>
                   {effectiveTabs.some((t) => t.to === item.to) && (
@@ -89,19 +89,19 @@ export function NavCustomizer({ role, open, onClose }: { role: Role; open: boole
 
         <section>
           <div className="flex items-baseline justify-between gap-2">
-            <h4 className="text-[11px] font-semibold uppercase tracking-wide text-slate-400 dark:text-slate-500">
+            <h4 className="text-[11px] font-semibold uppercase tracking-wide text-gray-400 dark:text-gray-500">
               Phone tab bar
             </h4>
-            <span className="text-[11px] tabular-nums text-slate-400 dark:text-slate-500">
+            <span className="text-[11px] tabular-nums text-gray-400 dark:text-gray-500">
               {tabs.length} of {MAX_MOBILE_TABS} chosen
             </span>
           </div>
-          <p className="mb-2 mt-0.5 text-xs text-slate-500 dark:text-slate-400">
+          <p className="mb-2 mt-0.5 text-xs text-gray-500 dark:text-gray-400">
             {tabs.length
               ? `Only these get a tab along the bottom of your phone. Everything else stays one tap away in More.`
               : `Nothing chosen yet, so your phone uses the default ${MAX_MOBILE_TABS}. Pick your own below.`}
           </p>
-          <div className="divide-y divide-slate-100 rounded-xl border border-slate-200 dark:divide-slate-800 dark:border-slate-700">
+          <div className="divide-y divide-gray-100 rounded-xl border border-gray-200 dark:divide-gray-800 dark:border-gray-700">
             {visible.map((item) => {
               const pinned = tabs.includes(item.to);
               // The bar holds four; unpin one before adding another.
@@ -118,8 +118,8 @@ export function NavCustomizer({ role, open, onClose }: { role: Role; open: boole
                     disabled={blocked}
                     onChange={() => toggleNavTab(role, item.to)}
                   />
-                  <item.icon size={18} className="shrink-0 text-slate-400 dark:text-slate-500" />
-                  <span className="min-w-0 flex-1 truncate text-sm text-slate-700 dark:text-slate-200">
+                  <item.icon size={18} className="shrink-0 text-gray-400 dark:text-gray-500" />
+                  <span className="min-w-0 flex-1 truncate text-sm text-gray-700 dark:text-gray-200">
                     {item.label}
                   </span>
                 </label>
@@ -130,18 +130,18 @@ export function NavCustomizer({ role, open, onClose }: { role: Role; open: boole
           {/* A live preview of the bar, so the effect is obvious on a desktop
               screen where the real thing isn't rendered. */}
           <div className="mt-3">
-            <p className="mb-1 text-[11px] font-medium text-slate-400 dark:text-slate-500">Preview</p>
-            <div className="flex overflow-hidden rounded-xl border border-slate-200 bg-white dark:border-slate-700 dark:bg-slate-900">
+            <p className="mb-1 text-[11px] font-medium text-gray-400 dark:text-gray-500">Preview</p>
+            <div className="flex overflow-hidden rounded-xl border border-gray-200 bg-white dark:border-gray-700 dark:bg-gray-900">
               {effectiveTabs.map((item) => (
                 <span
                   key={item.to}
-                  className="flex flex-1 flex-col items-center gap-0.5 py-2 text-[10px] font-medium text-slate-500 dark:text-slate-400"
+                  className="flex flex-1 flex-col items-center gap-0.5 py-2 text-[10px] font-medium text-gray-500 dark:text-gray-400"
                 >
                   <item.icon size={18} />
                   <span className="max-w-full truncate px-0.5">{item.shortLabel ?? item.label}</span>
                 </span>
               ))}
-              <span className="flex flex-1 flex-col items-center gap-0.5 py-2 text-[10px] font-medium text-slate-400 dark:text-slate-500">
+              <span className="flex flex-1 flex-col items-center gap-0.5 py-2 text-[10px] font-medium text-gray-400 dark:text-gray-500">
                 <span className="text-lg leading-[18px]">···</span>
                 More
               </span>

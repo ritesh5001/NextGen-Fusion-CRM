@@ -65,13 +65,13 @@ export function CallBar() {
     // indicator) rather than burying it — the user can still navigate mid-call.
     <div className="fixed inset-x-0 bottom-[calc(3.5rem+env(safe-area-inset-bottom,0px))] z-50 flex flex-col items-center gap-2 px-3 pb-2 md:bottom-4 md:pb-0">
       {keypadOpen && (
-        <div className="w-full max-w-md rounded-2xl border border-slate-200 bg-white p-3 shadow-2xl dark:border-slate-700 dark:bg-slate-900">
+        <div className="w-full max-w-md rounded-2xl border border-gray-200 bg-white p-3 shadow-2xl dark:border-gray-700 dark:bg-gray-900">
           <div className="mb-2 flex h-6 items-center justify-between">
-            <span className="text-xs font-medium text-slate-500 dark:text-slate-400">
+            <span className="text-xs font-medium text-gray-500 dark:text-gray-400">
               Press a key to send it to the menu
             </span>
             {digitsSent && (
-              <span className="font-mono text-sm font-semibold tracking-widest text-slate-800 dark:text-slate-100">
+              <span className="font-mono text-sm font-semibold tracking-widest text-gray-800 dark:text-gray-100">
                 {digitsSent}
               </span>
             )}
@@ -80,7 +80,7 @@ export function CallBar() {
         </div>
       )}
 
-      <div className="flex w-full max-w-md items-center gap-3 rounded-2xl border border-slate-200 bg-white px-4 py-3 shadow-2xl dark:border-slate-700 dark:bg-slate-900">
+      <div className="flex w-full max-w-md items-center gap-3 rounded-2xl border border-gray-200 bg-white px-4 py-3 shadow-2xl dark:border-gray-700 dark:bg-gray-900">
         <span className="relative flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-300">
           <Phone size={16} />
           {phase !== 'in_call' && (
@@ -89,10 +89,10 @@ export function CallBar() {
         </span>
 
         <div className="min-w-0 flex-1">
-          <p className="truncate text-sm font-semibold text-slate-800 dark:text-slate-100">
+          <p className="truncate text-sm font-semibold text-gray-800 dark:text-gray-100">
             {leadName || phone || 'Call'}
           </p>
-          <p className="truncate text-xs text-slate-500 dark:text-slate-400">
+          <p className="truncate text-xs text-gray-500 dark:text-gray-400">
             {error ? <span className="text-rose-600">{error}</span> : statusText}
           </p>
         </div>
@@ -104,8 +104,8 @@ export function CallBar() {
           aria-pressed={keypadOpen}
           className={`tap flex items-center justify-center rounded-full p-3 disabled:opacity-40 md:p-2.5 ${
             keypadOpen
-              ? 'bg-brand-600 text-white hover:bg-brand-700'
-              : 'text-slate-600 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800'
+              ? 'bg-gray-950 text-white dark:bg-white dark:text-gray-950'
+              : 'text-gray-600 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-800'
           }`}
         >
           <Grid3x3 size={18} />
@@ -114,7 +114,7 @@ export function CallBar() {
           onClick={toggleMute}
           disabled={phase !== 'in_call'}
           title={muted ? 'Unmute' : 'Mute'}
-          className="tap flex items-center justify-center rounded-full p-3 text-slate-600 hover:bg-slate-100 disabled:opacity-40 dark:text-slate-300 dark:hover:bg-slate-800 md:p-2.5"
+          className="tap flex items-center justify-center rounded-full p-3 text-gray-600 hover:bg-gray-100 disabled:opacity-40 dark:text-gray-300 dark:hover:bg-gray-800 md:p-2.5"
         >
           {muted ? <MicOff size={18} /> : <Mic size={18} />}
         </button>

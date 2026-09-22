@@ -25,7 +25,7 @@ const STATUS_STYLE: Record<Status, string> = {
   ok: 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-300',
   warn: 'bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-300',
   bad: 'bg-rose-100 text-rose-700 dark:bg-rose-900/40 dark:text-rose-300',
-  idle: 'bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300',
+  idle: 'bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-300',
 };
 
 function StatusBadge({ status, children }: { status: Status; children: React.ReactNode }) {
@@ -50,7 +50,7 @@ function LevelMeter({ level, active }: { level: number; active: boolean }) {
           <span
             key={i}
             className={`flex-1 rounded-sm transition-[height,background-color] duration-75 ${
-              on ? (hot ? 'bg-rose-500' : 'bg-emerald-500') : 'bg-slate-200 dark:bg-slate-700'
+              on ? (hot ? 'bg-rose-500' : 'bg-emerald-500') : 'bg-gray-200 dark:bg-gray-700'
             }`}
             style={{ height: on ? `${30 + (i / bars) * 70}%` : '30%' }}
           />
@@ -62,8 +62,8 @@ function LevelMeter({ level, active }: { level: number; active: boolean }) {
 
 function Row({ label, children }: { label: string; children: React.ReactNode }) {
   return (
-    <div className="flex items-center justify-between gap-3 border-b border-slate-100 py-2.5 last:border-0 dark:border-slate-800">
-      <span className="text-sm text-slate-600 dark:text-slate-300">{label}</span>
+    <div className="flex items-center justify-between gap-3 border-b border-gray-100 py-2.5 last:border-0 dark:border-gray-800">
+      <span className="text-sm text-gray-600 dark:text-gray-300">{label}</span>
       {children}
     </div>
   );
@@ -147,10 +147,10 @@ export function DeviceTestPage() {
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="flex items-center gap-2 text-xl font-bold text-slate-800 dark:text-slate-100">
+          <h1 className="flex items-center gap-2 text-xl font-bold text-gray-800 dark:text-gray-100">
             <Mic size={20} /> Device Test
           </h1>
-          <p className="mt-0.5 text-sm text-slate-500 dark:text-slate-400">
+          <p className="mt-0.5 text-sm text-gray-500 dark:text-gray-400">
             Check your microphone and audio before you start calling.
           </p>
         </div>
@@ -170,7 +170,7 @@ export function DeviceTestPage() {
         {/* Microphone */}
         <Card className="p-4">
           <div className="mb-3 flex items-center justify-between">
-            <h2 className="flex items-center gap-2 font-semibold text-slate-800 dark:text-slate-100">
+            <h2 className="flex items-center gap-2 font-semibold text-gray-800 dark:text-gray-100">
               <Mic size={16} /> Microphone
             </h2>
             <StatusBadge status={micStatus}>
@@ -188,19 +188,19 @@ export function DeviceTestPage() {
 
           <div className="mb-3">
             <Row label="Detected">
-              <span className="max-w-[60%] truncate text-sm font-medium text-slate-800 dark:text-slate-100">
+              <span className="max-w-[60%] truncate text-sm font-medium text-gray-800 dark:text-gray-100">
                 {granted ? micName : `${inputs.length || 'No'} device${inputs.length === 1 ? '' : 's'}`}
               </span>
             </Row>
             <Row label="Inputs available">
-              <span className="text-sm font-medium text-slate-800 dark:text-slate-100">{inputs.length}</span>
+              <span className="text-sm font-medium text-gray-800 dark:text-gray-100">{inputs.length}</span>
             </Row>
           </div>
 
           {!granted ? (
-            <div className="rounded-lg bg-slate-50 p-4 text-center dark:bg-slate-800/50">
-              <MicOff size={22} className="mx-auto mb-2 text-slate-400" />
-              <p className="mb-3 text-sm text-slate-600 dark:text-slate-300">
+            <div className="rounded-lg bg-gray-50 p-4 text-center dark:bg-gray-800/50">
+              <MicOff size={22} className="mx-auto mb-2 text-gray-400" />
+              <p className="mb-3 text-sm text-gray-600 dark:text-gray-300">
                 {permission === 'denied'
                   ? 'Mic access is blocked. Allow it in your browser’s site settings, then refresh.'
                   : 'Allow microphone access to see your devices and test them.'}
@@ -221,14 +221,14 @@ export function DeviceTestPage() {
                     </option>
                   ))}
                 </Select>
-                <p className="mt-1 text-xs text-slate-400 dark:text-slate-500">
+                <p className="mt-1 text-xs text-gray-400 dark:text-gray-500">
                   Used for your browser calls. Remembered on this computer.
                 </p>
               </div>
 
-              <div className="rounded-lg border border-slate-200 p-3 dark:border-slate-700">
+              <div className="rounded-lg border border-gray-200 p-3 dark:border-gray-700">
                 <div className="mb-2 flex items-center justify-between">
-                  <span className="text-xs font-medium text-slate-500 dark:text-slate-400">Input level</span>
+                  <span className="text-xs font-medium text-gray-500 dark:text-gray-400">Input level</span>
                   {listening && (
                     <span className={`text-xs font-medium ${heardSound ? 'text-emerald-600' : 'text-amber-600'}`}>
                       {heardSound ? 'Sound detected' : 'Say something…'}
@@ -255,7 +255,7 @@ export function DeviceTestPage() {
         {/* Playback + calling readiness */}
         <div className="space-y-4">
           <Card className="p-4">
-            <h2 className="mb-3 flex items-center gap-2 font-semibold text-slate-800 dark:text-slate-100">
+            <h2 className="mb-3 flex items-center gap-2 font-semibold text-gray-800 dark:text-gray-100">
               <Volume2 size={16} /> Speaker &amp; playback
             </h2>
 
@@ -273,7 +273,7 @@ export function DeviceTestPage() {
               </div>
             )}
 
-            <p className="mb-3 text-sm text-slate-500 dark:text-slate-400">
+            <p className="mb-3 text-sm text-gray-500 dark:text-gray-400">
               Record a few seconds and play it back — if you hear yourself clearly, your setup is good.
             </p>
             <div className="flex flex-wrap items-center gap-2">
@@ -294,7 +294,7 @@ export function DeviceTestPage() {
           </Card>
 
           <Card className="p-4">
-            <h2 className="mb-1 flex items-center gap-2 font-semibold text-slate-800 dark:text-slate-100">
+            <h2 className="mb-1 flex items-center gap-2 font-semibold text-gray-800 dark:text-gray-100">
               <Wifi size={16} /> Calling readiness
             </h2>
             <div>
@@ -320,7 +320,7 @@ export function DeviceTestPage() {
               </Row>
             </div>
             {!callingEnabled && (
-              <p className="mt-2 text-xs text-slate-400 dark:text-slate-500">
+              <p className="mt-2 text-xs text-gray-400 dark:text-gray-500">
                 Browser calling isn’t configured yet — ask your admin to set up Twilio in Integrations.
               </p>
             )}

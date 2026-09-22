@@ -10,12 +10,14 @@ interface Props extends ButtonHTMLAttributes<HTMLButtonElement> {
 }
 
 const variants: Record<Variant, string> = {
-  primary: 'bg-brand-600 text-white hover:bg-brand-700 disabled:bg-brand-300',
+  // nextgenfusion.in's CTAs are solid black ("Book a Free Call"); inverted in dark mode.
+  primary:
+    'bg-gray-950 text-white hover:bg-gray-800 disabled:bg-gray-400 dark:bg-white dark:text-gray-950 dark:hover:bg-gray-200 dark:disabled:bg-gray-600',
   secondary:
-    'bg-white text-slate-700 border border-slate-300 hover:bg-slate-50 dark:bg-slate-800 dark:text-slate-200 dark:border-slate-600 dark:hover:bg-slate-700',
+    'bg-white text-gray-900 border border-gray-200 hover:border-gray-300 hover:bg-gray-50 dark:bg-gray-900 dark:text-gray-100 dark:border-gray-700 dark:hover:bg-gray-800',
   danger: 'bg-rose-600 text-white hover:bg-rose-700 disabled:bg-rose-300',
   success: 'bg-emerald-600 text-white hover:bg-emerald-700 disabled:bg-emerald-300',
-  ghost: 'text-slate-600 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800',
+  ghost: 'text-gray-600 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-800',
 };
 
 // Buttons are roomier on phones and snap back to the dense desktop metrics at
@@ -36,7 +38,7 @@ export function Button({
 }: Props) {
   return (
     <button
-      className={`inline-flex touch-manipulation items-center justify-center gap-1.5 whitespace-nowrap rounded-lg font-medium transition-colors disabled:cursor-not-allowed disabled:opacity-70 ${variants[variant]} ${sizes[size]} ${className}`}
+      className={`inline-flex touch-manipulation items-center justify-center gap-1.5 whitespace-nowrap rounded-btn font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500/40 focus-visible:ring-offset-1 disabled:cursor-not-allowed disabled:opacity-70 ${variants[variant]} ${sizes[size]} ${className}`}
       disabled={disabled || loading}
       {...rest}
     >

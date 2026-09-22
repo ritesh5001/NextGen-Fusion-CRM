@@ -69,15 +69,15 @@ function NumberAssignmentCard({ configured }: { configured: boolean }) {
           <UsersIcon size={20} />
         </span>
         <div>
-          <h2 className="font-semibold text-slate-800 dark:text-slate-100">Caller numbers</h2>
-          <p className="text-xs text-slate-500 dark:text-slate-400">
+          <h2 className="font-semibold text-gray-800 dark:text-gray-100">Caller numbers</h2>
+          <p className="text-xs text-gray-500 dark:text-gray-400">
             Assign a Twilio number to each telecaller — they'll dial leads from that number.
           </p>
         </div>
       </div>
 
       {!configured ? (
-        <p className="text-sm text-slate-500 dark:text-slate-400">
+        <p className="text-sm text-gray-500 dark:text-gray-400">
           Save valid Twilio credentials above first to load your numbers.
         </p>
       ) : numbers.isLoading || telecallers.isLoading ? (
@@ -87,17 +87,17 @@ function NumberAssignmentCard({ configured }: { configured: boolean }) {
           No voice-capable numbers found on your Twilio account. Buy a number in the Twilio console.
         </p>
       ) : users.length === 0 ? (
-        <p className="text-sm text-slate-500 dark:text-slate-400">No telecallers yet. Add users first.</p>
+        <p className="text-sm text-gray-500 dark:text-gray-400">No telecallers yet. Add users first.</p>
       ) : (
-        <div className="divide-y divide-slate-100 dark:divide-slate-800">
+        <div className="divide-y divide-gray-100 dark:divide-gray-800">
           {users.map((u) => {
             // Keep a stale/unknown assigned number visible as an option.
             const known = numberList.some((n) => n.phoneNumber === u.twilioNumber);
             return (
               <div key={u._id} className="flex flex-col gap-2 py-3 sm:flex-row sm:flex-wrap sm:items-center sm:justify-between sm:gap-3">
                 <div className="min-w-0">
-                  <p className="truncate text-sm font-medium text-slate-700 dark:text-slate-200">{u.name}</p>
-                  <p className="truncate text-xs text-slate-400 dark:text-slate-500">{u.email}</p>
+                  <p className="truncate text-sm font-medium text-gray-700 dark:text-gray-200">{u.name}</p>
+                  <p className="truncate text-xs text-gray-400 dark:text-gray-500">{u.email}</p>
                 </div>
                 <div className="flex items-center gap-2">
                   <Select
@@ -190,8 +190,8 @@ export function IntegrationsPage() {
   return (
     <div className="space-y-4">
       <div>
-        <h1 className="text-xl font-bold text-slate-800 dark:text-slate-100">Integrations</h1>
-        <p className="text-sm text-slate-500 dark:text-slate-400">
+        <h1 className="text-xl font-bold text-gray-800 dark:text-gray-100">Integrations</h1>
+        <p className="text-sm text-gray-500 dark:text-gray-400">
           Connect third-party services. Credentials are stored securely and never shown again.
         </p>
       </div>
@@ -204,8 +204,8 @@ export function IntegrationsPage() {
               <Phone size={20} />
             </span>
             <div>
-              <h2 className="font-semibold text-slate-800 dark:text-slate-100">Twilio — Browser calling</h2>
-              <p className="text-xs text-slate-500 dark:text-slate-400">
+              <h2 className="font-semibold text-gray-800 dark:text-gray-100">Twilio — Browser calling</h2>
+              <p className="text-xs text-gray-500 dark:text-gray-400">
                 Place calls to leads directly from the browser (WebRTC softphone).
               </p>
             </div>
@@ -222,20 +222,20 @@ export function IntegrationsPage() {
         </div>
 
         {/* Toggles */}
-        <div className="space-y-3 rounded-xl border border-slate-200 p-4 dark:border-slate-700">
+        <div className="space-y-3 rounded-xl border border-gray-200 p-4 dark:border-gray-700">
           <div className="flex items-center justify-between gap-4">
             <div>
-              <p className="text-sm font-medium text-slate-700 dark:text-slate-200">Enable calling</p>
-              <p className="text-xs text-slate-500 dark:text-slate-400">
+              <p className="text-sm font-medium text-gray-700 dark:text-gray-200">Enable calling</p>
+              <p className="text-xs text-gray-500 dark:text-gray-400">
                 Turn the in-app dialer on. When off, Call buttons use the phone's native dialer.
               </p>
             </div>
             <Toggle checked={form.enabled} onChange={(v) => set('enabled', v)} />
           </div>
-          <div className="flex items-center justify-between gap-4 border-t border-slate-100 pt-3 dark:border-slate-800">
+          <div className="flex items-center justify-between gap-4 border-t border-gray-100 pt-3 dark:border-gray-800">
             <div>
-              <p className="text-sm font-medium text-slate-700 dark:text-slate-200">Record calls</p>
-              <p className="text-xs text-slate-500 dark:text-slate-400">
+              <p className="text-sm font-medium text-gray-700 dark:text-gray-200">Record calls</p>
+              <p className="text-xs text-gray-500 dark:text-gray-400">
                 Store a recording of each call and attach it to the call log.
               </p>
             </div>
@@ -298,7 +298,7 @@ export function IntegrationsPage() {
               onChange={(e) => set('defaultCountryCode', e.target.value)}
               placeholder="+91"
             />
-            <p className="mt-1 text-[11px] text-slate-400 dark:text-slate-500">
+            <p className="mt-1 text-[11px] text-gray-400 dark:text-gray-500">
               Added to dialled numbers that have no country code (used when a contact's country is unknown).
             </p>
           </div>
@@ -314,13 +314,13 @@ export function IntegrationsPage() {
 
         {/* Setup hint */}
         {data?.voiceWebhookUrl && (
-          <div className="rounded-xl bg-slate-50 p-4 text-sm dark:bg-slate-800/60">
-            <p className="font-medium text-slate-700 dark:text-slate-200">Twilio setup</p>
-            <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
+          <div className="rounded-xl bg-gray-50 p-4 text-sm dark:bg-gray-800/60">
+            <p className="font-medium text-gray-700 dark:text-gray-200">Twilio setup</p>
+            <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
               In your Twilio TwiML App, set the <span className="font-medium">Voice Request URL (POST)</span> to:
             </p>
             <div className="mt-2 flex flex-col gap-2 sm:flex-row sm:items-center">
-              <code className="min-w-0 flex-1 truncate rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs text-slate-700 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200">
+              <code className="min-w-0 flex-1 truncate rounded-lg border border-gray-200 bg-white px-3 py-2 text-xs text-gray-700 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-200">
                 {data.voiceWebhookUrl}
               </code>
               <Button size="sm" variant="secondary" className="shrink-0" onClick={() => copy(data.voiceWebhookUrl)}>

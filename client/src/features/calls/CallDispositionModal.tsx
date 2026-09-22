@@ -105,9 +105,9 @@ export function CallDispositionModal() {
       }
     >
       <div className="space-y-3.5">
-        <div className="rounded-lg bg-slate-50 px-3 py-2 text-sm dark:bg-slate-800/60">
-          <p className="font-medium text-slate-800 dark:text-slate-100">{pending.leadName || pending.phone}</p>
-          <p className="text-xs text-slate-500 dark:text-slate-400">
+        <div className="rounded-lg bg-gray-50 px-3 py-2 text-sm dark:bg-gray-800/60">
+          <p className="font-medium text-gray-800 dark:text-gray-100">{pending.leadName || pending.phone}</p>
+          <p className="text-xs text-gray-500 dark:text-gray-400">
             {pending.phone} · Duration: {fmtDuration(pending.durationSec)}
           </p>
         </div>

@@ -148,8 +148,8 @@ export function TasksPage() {
   return (
     <div className="space-y-3">
       <div>
-        <h1 className="text-xl font-bold text-slate-800 dark:text-slate-100">{isAdmin ? 'Tasks' : 'My Tasks'}</h1>
-        <p className="hidden text-sm text-slate-500 dark:text-slate-400 sm:block">
+        <h1 className="text-xl font-bold text-gray-800 dark:text-gray-100">{isAdmin ? 'Tasks' : 'My Tasks'}</h1>
+        <p className="hidden text-sm text-gray-500 dark:text-gray-400 sm:block">
           {isAdmin
             ? 'Assign work to your users and see exactly when it got done.'
             : 'Everything assigned to you. Tick it off and say when you did it.'}
@@ -164,7 +164,7 @@ export function TasksPage() {
             className={`flex items-center gap-2.5 rounded-xl border p-2.5 text-left transition-colors ${
               c.active
                 ? 'border-brand-500 bg-brand-50 dark:border-brand-500 dark:bg-brand-500/10'
-                : 'border-slate-200 bg-white hover:bg-slate-50 dark:border-slate-800 dark:bg-slate-900 dark:hover:bg-slate-800'
+                : 'border-gray-200 bg-white hover:bg-gray-50 dark:border-gray-800 dark:bg-gray-900 dark:hover:bg-gray-800'
             }`}
           >
             <span
@@ -177,10 +177,10 @@ export function TasksPage() {
               {c.icon}
             </span>
             <span className="min-w-0">
-              <span className="block text-lg font-bold leading-tight tabular-nums text-slate-800 dark:text-slate-100">
-                {statsFailed ? <span className="text-slate-400 dark:text-slate-600">—</span> : c.value}
+              <span className="block text-lg font-bold leading-tight tabular-nums text-gray-800 dark:text-gray-100">
+                {statsFailed ? <span className="text-gray-400 dark:text-gray-600">—</span> : c.value}
               </span>
-              <span className="block truncate text-xs text-slate-500 dark:text-slate-400">{c.label}</span>
+              <span className="block truncate text-xs text-gray-500 dark:text-gray-400">{c.label}</span>
             </span>
           </button>
         ))}
@@ -199,8 +199,8 @@ export function TasksPage() {
               onClick={() => setTab(t.key)}
               className={`min-h-11 shrink-0 whitespace-nowrap rounded-lg px-4 text-sm font-medium transition-colors md:min-h-0 md:px-3 md:py-1.5 ${
                 tab === t.key
-                  ? 'bg-brand-600 text-white'
-                  : 'border border-slate-200 bg-white text-slate-600 hover:bg-slate-50 dark:border-slate-800 dark:bg-slate-900 dark:text-slate-300 dark:hover:bg-slate-800'
+                  ? 'bg-gray-950 text-white dark:bg-white dark:text-gray-950'
+                  : 'border border-gray-200 bg-white text-gray-600 hover:bg-gray-50 dark:border-gray-800 dark:bg-gray-900 dark:text-gray-300 dark:hover:bg-gray-800'
               }`}
             >
               {t.label}
@@ -210,14 +210,14 @@ export function TasksPage() {
 
         <div className="relative md:min-w-40 md:flex-1">
           <Search
-            className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"
+            className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
             size={15}
             aria-hidden
           />
           <input
             aria-label="Search tasks"
             type="search"
-            className="min-h-11 w-full rounded-lg border border-slate-300 bg-white py-2 pl-9 pr-3 text-sm outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-100 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100 dark:focus:ring-brand-500/25 md:min-h-0"
+            className="min-h-11 w-full rounded-lg border border-gray-300 bg-white py-2 pl-9 pr-3 text-sm outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-100 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-100 dark:focus:ring-brand-500/25 md:min-h-0"
             value={term}
             onChange={(e) => setTerm(e.target.value)}
             placeholder="Search tasks…"
@@ -228,7 +228,7 @@ export function TasksPage() {
           {isAdmin && (
             <select
               aria-label="Filter by assignee"
-              className="col-span-2 min-h-11 w-full truncate rounded-lg border border-slate-300 bg-white py-2 pl-2 pr-7 text-sm dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100 md:col-span-1 md:min-h-0 md:w-40 md:shrink-0 md:pr-2"
+              className="col-span-2 min-h-11 w-full truncate rounded-lg border border-gray-300 bg-white py-2 pl-2 pr-7 text-sm dark:border-gray-700 dark:bg-gray-900 dark:text-gray-100 md:col-span-1 md:min-h-0 md:w-40 md:shrink-0 md:pr-2"
               value={assignedTo}
               onChange={(e) => setAssignedTo(e.target.value)}
             >
@@ -243,7 +243,7 @@ export function TasksPage() {
 
           <select
             aria-label="Filter by due date"
-            className="min-h-11 w-full truncate rounded-lg border border-slate-300 bg-white py-2 pl-2 pr-7 text-sm dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100 md:pr-2 md:min-h-0 md:w-36 md:shrink-0"
+            className="min-h-11 w-full truncate rounded-lg border border-gray-300 bg-white py-2 pl-2 pr-7 text-sm dark:border-gray-700 dark:bg-gray-900 dark:text-gray-100 md:pr-2 md:min-h-0 md:w-36 md:shrink-0"
             value={scope}
             onChange={(e) => setScope(e.target.value)}
           >
@@ -256,7 +256,7 @@ export function TasksPage() {
 
           <select
             aria-label="Filter by priority"
-            className="min-h-11 w-full truncate rounded-lg border border-slate-300 bg-white py-2 pl-2 pr-7 text-sm dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100 md:pr-2 md:min-h-0 md:w-32 md:shrink-0"
+            className="min-h-11 w-full truncate rounded-lg border border-gray-300 bg-white py-2 pl-2 pr-7 text-sm dark:border-gray-700 dark:bg-gray-900 dark:text-gray-100 md:pr-2 md:min-h-0 md:w-32 md:shrink-0"
             value={priority}
             onChange={(e) => setPriority(e.target.value)}
           >
@@ -269,11 +269,11 @@ export function TasksPage() {
       </div>
 
       {isLoading && !data ? (
-        <div className="rounded-xl border border-slate-200 bg-white dark:border-slate-800 dark:bg-slate-900">
+        <div className="rounded-xl border border-gray-200 bg-white dark:border-gray-800 dark:bg-gray-900">
           <Spinner />
         </div>
       ) : !tasks.length ? (
-        <div className="rounded-xl border border-slate-200 bg-white dark:border-slate-800 dark:bg-slate-900">
+        <div className="rounded-xl border border-gray-200 bg-white dark:border-gray-800 dark:bg-gray-900">
           <EmptyState
             title={filtered ? 'Nothing matches those filters' : tab === 'open' ? 'All caught up 🎉' : 'No tasks here'}
             hint={
@@ -303,7 +303,7 @@ export function TasksPage() {
           <Button size="sm" variant="secondary" disabled={page <= 1} onClick={() => setPage((p) => p - 1)}>
             Previous
           </Button>
-          <span className="text-xs tabular-nums text-slate-500 dark:text-slate-400">
+          <span className="text-xs tabular-nums text-gray-500 dark:text-gray-400">
             {data?.pagination.page ?? page} / {totalPages}
           </span>
           <Button size="sm" variant="secondary" disabled={page >= totalPages} onClick={() => setPage((p) => p + 1)}>

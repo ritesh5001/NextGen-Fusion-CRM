@@ -2,11 +2,11 @@ import { forwardRef } from 'react';
 import type { InputHTMLAttributes, SelectHTMLAttributes, TextareaHTMLAttributes, ReactNode } from 'react';
 
 const base =
-  'w-full min-h-11 rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-100 disabled:bg-slate-50 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-100 dark:placeholder:text-slate-500 dark:focus:ring-brand-900/40 dark:disabled:bg-slate-900 md:min-h-0';
+  'w-full min-h-11 rounded-btn border border-gray-200 bg-white px-3 py-2 text-sm outline-none transition-colors placeholder:text-gray-400 hover:border-gray-300 focus:border-brand-500 focus:ring-2 focus:ring-brand-100 disabled:bg-gray-50 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-100 dark:placeholder:text-gray-500 dark:focus:ring-brand-900/40 dark:disabled:bg-gray-900 md:min-h-0';
 
 export function Label({ children, htmlFor }: { children: ReactNode; htmlFor?: string }) {
   return (
-    <label htmlFor={htmlFor} className="mb-1 block text-xs font-medium text-slate-600 dark:text-slate-300">
+    <label htmlFor={htmlFor} className="mb-1 block text-xs font-medium text-gray-600 dark:text-gray-300">
       {children}
     </label>
   );
@@ -35,7 +35,7 @@ export function Select(props: SelectHTMLAttributes<HTMLSelectElement>) {
   return (
     <select
       {...props}
-      className={`${base} truncate bg-white pr-8 dark:bg-slate-800 ${props.className ?? ''}`}
+      className={`${base} truncate bg-white pr-8 dark:bg-gray-900 ${props.className ?? ''}`}
     />
   );
 }

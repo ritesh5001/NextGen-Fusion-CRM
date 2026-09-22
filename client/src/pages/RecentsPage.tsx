@@ -37,7 +37,7 @@ export function RecentsPage() {
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <h1 className="flex items-center gap-2 text-xl font-bold text-slate-800 dark:text-slate-100">
+        <h1 className="flex items-center gap-2 text-xl font-bold text-gray-800 dark:text-gray-100">
           <PhoneCall size={20} /> Recents
         </h1>
         {totalPages > 1 && (
@@ -45,7 +45,7 @@ export function RecentsPage() {
             <Button size="sm" variant="secondary" disabled={page <= 1} onClick={() => setPage((p) => p - 1)}>
               Previous
             </Button>
-            <span className="px-1 text-xs text-slate-500 dark:text-slate-400">
+            <span className="px-1 text-xs text-gray-500 dark:text-gray-400">
               {data?.pagination.page ?? page} / {totalPages}
             </span>
             <Button size="sm" variant="secondary" disabled={page >= totalPages} onClick={() => setPage((p) => p + 1)}>
@@ -63,7 +63,7 @@ export function RecentsPage() {
         ) : !calls.length ? (
           <EmptyState title="No calls yet" hint="Calls you place will show up here with their recordings." />
         ) : (
-          <div className="divide-y divide-slate-100 dark:divide-slate-800">
+          <div className="divide-y divide-gray-100 dark:divide-gray-800">
             {calls.map((c) => {
               const lead = leadOf(c);
               const number =
@@ -77,29 +77,29 @@ export function RecentsPage() {
                     <div className="min-w-0 flex-1">
                       {/* A custom dial has no contact — lead with the number itself
                           rather than an anonymous "unknown". */}
-                      <p className="truncate font-medium text-slate-800 dark:text-slate-100">
+                      <p className="truncate font-medium text-gray-800 dark:text-gray-100">
                         {lead?.name ?? number ?? 'Unknown contact'}
                       </p>
-                      <p className="truncate text-xs text-slate-500 dark:text-slate-400">
+                      <p className="truncate text-xs text-gray-500 dark:text-gray-400">
                         {lead ? number : 'Not saved as a contact'}
                         {isAdmin && telecallerName(c) ? ` · by ${telecallerName(c)}` : ''}
                       </p>
                       {/* On a phone the outcome sits under the name instead of in
                           a right-hand column that squeezes it to two words wide. */}
                       <div className="mt-1 flex flex-wrap items-center gap-x-2 gap-y-1 sm:hidden">
-                        <Badge className="bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300">
+                        <Badge className="bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-300">
                           {callLogOutcomeLabel(c.disposition, c.callStatus)}
                         </Badge>
-                        <span className="text-[11px] text-slate-400 dark:text-slate-500">
+                        <span className="text-[11px] text-gray-400 dark:text-gray-500">
                           {fmtDuration(c.durationSec)} · {fmtRelative(c.createdAt)}
                         </span>
                       </div>
                     </div>
                     <div className="hidden shrink-0 text-right sm:block">
-                      <Badge className="bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300">
+                      <Badge className="bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-300">
                         {callLogOutcomeLabel(c.disposition, c.callStatus)}
                       </Badge>
-                      <p className="mt-0.5 text-[11px] text-slate-400 dark:text-slate-500" title={fmtDateTime(c.createdAt)}>
+                      <p className="mt-0.5 text-[11px] text-gray-400 dark:text-gray-500" title={fmtDateTime(c.createdAt)}>
                         {fmtDuration(c.durationSec)} · {fmtRelative(c.createdAt)}
                       </p>
                     </div>
@@ -107,7 +107,7 @@ export function RecentsPage() {
                       {c.recordingUrl ? (
                         <RecordingPlayer callId={c._id} />
                       ) : (
-                        <span className="text-[11px] text-slate-400 dark:text-slate-500">No recording</span>
+                        <span className="text-[11px] text-gray-400 dark:text-gray-500">No recording</span>
                       )}
                     </div>
                   </div>

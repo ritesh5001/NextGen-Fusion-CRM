@@ -21,7 +21,7 @@ export function ProviderSwitcher({ className = '' }: { className?: string }) {
   return (
     <div className={`flex flex-wrap items-center gap-2 ${className}`}>
       {options.length > 1 && (
-        <div className="inline-flex rounded-lg border border-slate-200 bg-slate-50 p-0.5 dark:border-slate-700 dark:bg-slate-800">
+        <div className="inline-flex rounded-lg border border-gray-200 bg-gray-50 p-0.5 dark:border-gray-700 dark:bg-gray-800">
           {options.map((p) => (
             <button
               key={p}
@@ -29,8 +29,8 @@ export function ProviderSwitcher({ className = '' }: { className?: string }) {
               onClick={() => switchTo(p, p === 'telecmi' ? mode : 'softphone')}
               className={`rounded-md px-2.5 py-1 text-xs font-medium transition ${
                 provider === p
-                  ? 'bg-white text-slate-900 shadow-sm dark:bg-slate-900 dark:text-slate-100'
-                  : 'text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200'
+                  ? 'bg-white text-gray-900 shadow-sm dark:bg-gray-900 dark:text-gray-100'
+                  : 'text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200'
               }`}
             >
               {LABELS[p]}
@@ -41,10 +41,10 @@ export function ProviderSwitcher({ className = '' }: { className?: string }) {
 
       {/* TeleCMI can also ring the telecaller's own phone instead of the browser. */}
       {provider === 'telecmi' && (
-        <label className="flex items-center gap-1.5 text-xs text-slate-500 dark:text-slate-400">
+        <label className="flex items-center gap-1.5 text-xs text-gray-500 dark:text-gray-400">
           <input
             type="checkbox"
-            className="h-3.5 w-3.5 rounded border-slate-300 dark:border-slate-600"
+            className="h-3.5 w-3.5 rounded border-gray-300 dark:border-gray-600"
             checked={mode === 'click_to_call'}
             onChange={(e) => switchTo('telecmi', e.target.checked ? 'click_to_call' : 'softphone')}
           />

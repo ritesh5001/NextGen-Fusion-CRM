@@ -73,9 +73,9 @@ export function SaveCustomContactModal({
       }
     >
       <div className="space-y-3.5">
-        <div className="rounded-lg bg-slate-50 px-3 py-2 text-sm dark:bg-slate-800/60">
-          <p className="font-medium text-slate-800 dark:text-slate-100">{formatPhoneDisplay(phone)}</p>
-          <p className="text-xs text-slate-500 dark:text-slate-400">
+        <div className="rounded-lg bg-gray-50 px-3 py-2 text-sm dark:bg-gray-800/60">
+          <p className="font-medium text-gray-800 dark:text-gray-100">{formatPhoneDisplay(phone)}</p>
+          <p className="text-xs text-gray-500 dark:text-gray-400">
             This number isn’t in your contacts. The call is already saved — adding details is optional.
           </p>
         </div>

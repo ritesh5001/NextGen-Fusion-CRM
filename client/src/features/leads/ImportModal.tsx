@@ -140,7 +140,7 @@ export function ImportModal({ open, onClose }: Props) {
       }
     >
       {result ? (
-        <div className="space-y-2 text-sm dark:text-slate-200">
+        <div className="space-y-2 text-sm dark:text-gray-200">
           <p className="font-medium text-emerald-700 dark:text-emerald-400">Import complete ✅</p>
           <p>Total rows: {result.totalRows}</p>
           <p>New contacts added: {result.successCount}</p>
@@ -154,8 +154,8 @@ export function ImportModal({ open, onClose }: Props) {
         </div>
       ) : (
         <div className="space-y-3">
-          <div className="flex items-center justify-between rounded-lg bg-slate-50 px-3 py-2 dark:bg-slate-800">
-            <span className="text-xs text-slate-500 dark:text-slate-400">
+          <div className="flex items-center justify-between rounded-lg bg-gray-50 px-3 py-2 dark:bg-gray-800">
+            <span className="text-xs text-gray-500 dark:text-gray-400">
               New here? Download the template, fill it in, then upload it.
             </span>
             <Button size="sm" variant="secondary" onClick={() => downloadImportTemplate()}>
@@ -163,9 +163,9 @@ export function ImportModal({ open, onClose }: Props) {
             </Button>
           </div>
 
-          <label className="flex cursor-pointer flex-col items-center justify-center gap-2 rounded-xl border-2 border-dashed border-slate-300 p-6 hover:border-brand-400 dark:border-slate-600">
-            <UploadCloud className="text-slate-400 dark:text-slate-500" size={26} />
-            <span className="text-sm text-slate-500 dark:text-slate-400">
+          <label className="flex cursor-pointer flex-col items-center justify-center gap-2 rounded-xl border-2 border-dashed border-gray-300 p-6 hover:border-brand-400 dark:border-gray-600">
+            <UploadCloud className="text-gray-400 dark:text-gray-500" size={26} />
+            <span className="text-sm text-gray-500 dark:text-gray-400">
               {previewing ? 'Reading file…' : file ? file.name : 'Click to choose a CSV or Excel file'}
             </span>
             <input
@@ -180,21 +180,21 @@ export function ImportModal({ open, onClose }: Props) {
           {preview && (
             <div className="space-y-2">
               <div className="flex items-center justify-between">
-                <p className="text-sm font-semibold text-slate-700 dark:text-slate-200">Match columns</p>
-                <span className="text-xs text-slate-400 dark:text-slate-500">
+                <p className="text-sm font-semibold text-gray-700 dark:text-gray-200">Match columns</p>
+                <span className="text-xs text-gray-400 dark:text-gray-500">
                   {preview.headers.length} columns · {preview.totalRows} rows
                 </span>
               </div>
-              <p className="text-xs text-slate-400 dark:text-slate-500">
+              <p className="text-xs text-gray-400 dark:text-gray-500">
                 Pick which column in your file maps to each field. <span className="text-rose-500">*</span> required.
               </p>
-              <div className="max-h-72 space-y-1.5 overflow-y-auto rounded-lg border border-slate-200 p-2 dark:border-slate-700">
+              <div className="max-h-72 space-y-1.5 overflow-y-auto rounded-lg border border-gray-200 p-2 dark:border-gray-700">
                 {FIELDS.map((f) => {
                   const selected = mapping[f.id] ?? '';
                   const sampleVal = selected ? preview.sample[0]?.[selected] : '';
                   return (
                     <div key={f.id} className="grid grid-cols-2 items-center gap-2">
-                      <span className="text-sm text-slate-600 dark:text-slate-300">
+                      <span className="text-sm text-gray-600 dark:text-gray-300">
                         {f.label}
                         {f.required && <span className="text-rose-500"> *</span>}
                       </span>
@@ -211,7 +211,7 @@ export function ImportModal({ open, onClose }: Props) {
                           ))}
                         </Select>
                         {sampleVal && (
-                          <p className="mt-0.5 truncate text-[11px] text-slate-400 dark:text-slate-500" title={sampleVal}>
+                          <p className="mt-0.5 truncate text-[11px] text-gray-400 dark:text-gray-500" title={sampleVal}>
                             e.g. {sampleVal}
                           </p>
                         )}
@@ -245,7 +245,7 @@ export function ImportModal({ open, onClose }: Props) {
               <option value="update">Update the existing contact with the new details</option>
               <option value="import">Import anyway — allow a duplicate contact</option>
             </Select>
-            <p className="mt-0.5 text-[11px] text-slate-400 dark:text-slate-500">
+            <p className="mt-0.5 text-[11px] text-gray-400 dark:text-gray-500">
               Numbers are matched even when formatted differently (e.g. “+91 70074 36164” and “917007436164”).
             </p>
           </div>

@@ -104,7 +104,7 @@ export function WorkspaceSwitcher() {
   // Telecallers see a static badge — they can't switch or manage workspaces.
   if (!isAdmin) {
     return (
-      <div className="flex items-center gap-2 rounded-lg bg-slate-100 px-3 py-1.5 text-sm font-medium text-slate-700 dark:bg-slate-800 dark:text-slate-200">
+      <div className="flex items-center gap-2 rounded-lg bg-gray-100 px-3 py-1.5 text-sm font-medium text-gray-700 dark:bg-gray-800 dark:text-gray-200">
         <Building2 size={16} className="text-brand-600 dark:text-brand-400" />
         <span className="max-w-[10rem] truncate">{label}</span>
       </div>
@@ -116,35 +116,35 @@ export function WorkspaceSwitcher() {
       <div className="relative" ref={menuRef}>
         <button
           onClick={() => setOpen((o) => !o)}
-          className="flex items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200 dark:hover:bg-slate-800"
+          className="flex items-center gap-2 rounded-lg border border-gray-200 bg-white px-3 py-1.5 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-200 dark:hover:bg-gray-800"
         >
           <Building2 size={16} className="text-brand-600 dark:text-brand-400" />
           <span className="max-w-[10rem] truncate">{label}</span>
-          <ChevronDown size={15} className="text-slate-400" />
+          <ChevronDown size={15} className="text-gray-400" />
         </button>
 
         {open && (
-          <div className="absolute left-0 z-40 mt-1 w-64 overflow-hidden rounded-xl border border-slate-200 bg-white shadow-lg dark:border-slate-700 dark:bg-slate-900">
+          <div className="absolute left-0 z-40 mt-1 w-64 overflow-hidden rounded-xl border border-gray-200 bg-white shadow-lg dark:border-gray-700 dark:bg-gray-900">
             <div className="max-h-64 overflow-y-auto py-1">
               {workspaces.map((w) => (
                 <button
                   key={w._id}
                   onClick={() => switchTo(w._id)}
-                  className="flex w-full items-center justify-between gap-2 px-3 py-2 text-left text-sm text-slate-700 hover:bg-slate-100 dark:text-slate-200 dark:hover:bg-slate-800"
+                  className="flex w-full items-center justify-between gap-2 px-3 py-2 text-left text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-800"
                 >
                   <span className="truncate">{w.name}</span>
                   {w._id === activeId && <Check size={15} className="shrink-0 text-brand-600 dark:text-brand-400" />}
                 </button>
               ))}
             </div>
-            <div className="border-t border-slate-200 py-1 dark:border-slate-700">
+            <div className="border-t border-gray-200 py-1 dark:border-gray-700">
               <button
                 onClick={() => {
                   setName('');
                   setModal('create');
                   setOpen(false);
                 }}
-                className="flex w-full items-center gap-2 px-3 py-2 text-left text-sm text-slate-600 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800"
+                className="flex w-full items-center gap-2 px-3 py-2 text-left text-sm text-gray-600 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-800"
               >
                 <Plus size={15} /> Create workspace
               </button>
@@ -155,7 +155,7 @@ export function WorkspaceSwitcher() {
                     setModal('rename');
                     setOpen(false);
                   }}
-                  className="flex w-full items-center gap-2 px-3 py-2 text-left text-sm text-slate-600 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800"
+                  className="flex w-full items-center gap-2 px-3 py-2 text-left text-sm text-gray-600 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-800"
                 >
                   <Pencil size={15} /> Rename current
                 </button>
@@ -233,7 +233,7 @@ export function WorkspaceSwitcher() {
           </div>
         }
       >
-        <p className="mb-3 text-sm text-slate-600 dark:text-slate-300">
+        <p className="mb-3 text-sm text-gray-600 dark:text-gray-300">
           This permanently deletes <span className="font-semibold">{active?.name}</span> and all of its
           telecallers, contacts, tasks, calls, and follow-ups. This cannot be undone.
         </p>

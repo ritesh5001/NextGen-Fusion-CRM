@@ -28,7 +28,7 @@ export function CountryTime({ country, className = '' }: { country?: string | nu
   if (!time) return null;
   return (
     <span
-      className={`inline-flex items-center gap-0.5 text-[10px] text-slate-400 dark:text-slate-500 ${className}`}
+      className={`inline-flex items-center gap-0.5 text-[10px] text-gray-400 dark:text-gray-500 ${className}`}
       title={`Local time in ${country}`}
     >
       <Clock size={10} /> {time}

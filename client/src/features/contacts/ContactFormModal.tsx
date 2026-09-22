@@ -94,7 +94,7 @@ function fromLead(lead: Lead): FormState {
 function Section({ title, children }: { title: string; children: ReactNode }) {
   return (
     <section className="space-y-2.5">
-      <h4 className="text-[11px] font-semibold uppercase tracking-wide text-slate-400 dark:text-slate-500">
+      <h4 className="text-[11px] font-semibold uppercase tracking-wide text-gray-400 dark:text-gray-500">
         {title}
       </h4>
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">{children}</div>
@@ -122,7 +122,7 @@ function FormField({
       {error ? (
         <p className="mt-1 text-xs text-red-600 dark:text-red-400">{error}</p>
       ) : hint ? (
-        <p className="mt-1 text-[11px] text-slate-400 dark:text-slate-500">{hint}</p>
+        <p className="mt-1 text-[11px] text-gray-400 dark:text-gray-500">{hint}</p>
       ) : null}
     </div>
   );
@@ -145,7 +145,7 @@ function TagsInput({ tags, onChange }: { tags: string[]; onChange: (t: string[])
   }
 
   return (
-    <div className="flex min-h-[42px] flex-wrap items-center gap-1.5 rounded-lg border border-slate-300 px-2 py-1.5 focus-within:border-brand-500 dark:border-slate-600 dark:bg-slate-800">
+    <div className="flex min-h-[42px] flex-wrap items-center gap-1.5 rounded-lg border border-gray-300 px-2 py-1.5 focus-within:border-brand-500 dark:border-gray-600 dark:bg-gray-800">
       {tags.map((t) => (
         <span
           key={t}
@@ -175,7 +175,7 @@ function TagsInput({ tags, onChange }: { tags: string[]; onChange: (t: string[])
         }}
         onBlur={() => draft && commit(draft)}
         placeholder={tags.length ? '' : 'Type a tag and press Enter'}
-        className="min-w-[8rem] flex-1 bg-transparent text-sm outline-none dark:text-slate-100"
+        className="min-w-[8rem] flex-1 bg-transparent text-sm outline-none dark:text-gray-100"
       />
     </div>
   );
@@ -323,8 +323,8 @@ export function ContactFormModal({ open, onClose, lead }: Props) {
       footer={
         <div className="flex items-center justify-between gap-2">
           {/* The keyboard hint only means something where there's a keyboard. */}
-          <span className="hidden text-[11px] text-slate-400 dark:text-slate-500 sm:block">
-            {isEdit && !dirty ? 'No changes yet' : <>Press <kbd className="rounded border border-slate-300 px-1 dark:border-slate-600">⌘</kbd>+<kbd className="rounded border border-slate-300 px-1 dark:border-slate-600">Enter</kbd> to save</>}
+          <span className="hidden text-[11px] text-gray-400 dark:text-gray-500 sm:block">
+            {isEdit && !dirty ? 'No changes yet' : <>Press <kbd className="rounded border border-gray-300 px-1 dark:border-gray-600">⌘</kbd>+<kbd className="rounded border border-gray-300 px-1 dark:border-gray-600">Enter</kbd> to save</>}
           </span>
           <div className="flex flex-1 gap-2 [&>*]:flex-1 sm:flex-none sm:[&>*]:flex-none">
             <Button variant="secondary" onClick={onClose}>
@@ -389,7 +389,7 @@ export function ContactFormModal({ open, onClose, lead }: Props) {
               </p>
             )}
             {willCompact && (
-              <p className="text-[11px] text-slate-400 dark:text-slate-500">
+              <p className="text-[11px] text-gray-400 dark:text-gray-500">
                 Empty slots get closed up on save, so the remaining numbers move up.
               </p>
             )}

@@ -44,22 +44,22 @@ export function Sheet({ open, onClose, title, children, footer }: Props) {
       <button
         aria-label="Close"
         onClick={onClose}
-        className="absolute inset-0 bg-black/40 backdrop-blur-[1px]"
+        className="absolute inset-0 bg-gray-950/40 backdrop-blur-sm"
       />
-      <div className="relative flex max-h-[85vh] w-full flex-col rounded-t-2xl border-t border-slate-200 bg-white shadow-2xl dark:border-slate-700 dark:bg-slate-900">
+      <div className="relative flex max-h-[85vh] w-full flex-col rounded-t-2xl border-t border-gray-200 bg-white shadow-2xl dark:border-gray-700 dark:bg-gray-900">
         {/* Drag handle — the affordance people expect on a sheet. */}
         <button
           onClick={onClose}
           aria-label="Close"
-          className="mx-auto mt-2 h-1.5 w-10 shrink-0 rounded-full bg-slate-300 dark:bg-slate-600"
+          className="mx-auto mt-2 h-1.5 w-10 shrink-0 rounded-full bg-gray-300 dark:bg-gray-600"
         />
         {title && (
           <div className="flex shrink-0 items-center justify-between px-4 pb-2 pt-3">
-            <h3 className="text-base font-semibold text-slate-800 dark:text-slate-100">{title}</h3>
+            <h3 className="text-base font-semibold text-gray-800 dark:text-gray-100">{title}</h3>
             <button
               onClick={onClose}
               aria-label="Close"
-              className="tap -mr-2 flex items-center justify-center rounded-lg p-2 text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800"
+              className="tap -mr-2 flex items-center justify-center rounded-lg p-2 text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800"
             >
               <X size={20} />
             </button>
@@ -67,7 +67,7 @@ export function Sheet({ open, onClose, title, children, footer }: Props) {
         )}
         <div className="overscroll-none-y flex-1 overflow-y-auto px-4 pb-4 pt-1">{children}</div>
         {footer && (
-          <div className="shrink-0 border-t border-slate-200 px-4 pb-safe pt-3 dark:border-slate-700">
+          <div className="shrink-0 border-t border-gray-200 px-4 pb-safe pt-3 dark:border-gray-700">
             <div className="pb-3">{footer}</div>
           </div>
         )}

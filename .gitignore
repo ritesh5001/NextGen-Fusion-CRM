@@ -11,3 +11,4 @@ coverage/
 *.tsbuildinfo
 uploads/
 *.csv
+.gstack/

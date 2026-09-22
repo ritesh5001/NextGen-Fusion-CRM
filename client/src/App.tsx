@@ -19,7 +19,7 @@ export default function App() {
         position="top-right"
         toastOptions={{
           duration: 3000,
-          className: theme === 'dark' ? '!bg-slate-800 !text-slate-100' : '',
+          className: theme === 'dark' ? '!bg-gray-800 !text-gray-100' : '',
         }}
       />
     </BrowserRouter>

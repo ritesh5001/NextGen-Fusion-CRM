@@ -14,31 +14,31 @@ export function TelecallerDashboard() {
   return (
     <div className="space-y-5">
       <div>
-        <h1 className="text-xl font-bold text-slate-800 dark:text-slate-100">Hi, {user?.name} 👋</h1>
-        <p className="text-sm text-slate-500 dark:text-slate-400">Here's your work for today.</p>
+        <h1 className="text-xl font-bold text-gray-800 dark:text-gray-100">Hi, {user?.name} 👋</h1>
+        <p className="text-sm text-gray-500 dark:text-gray-400">Here's your work for today.</p>
       </div>
 
       {/* Daily target progress */}
       <Card className="p-5">
         <div className="flex items-center justify-between">
           <div>
-            <p className="text-xs font-medium uppercase text-slate-400 dark:text-slate-500">Today's calls</p>
-            <p className="text-3xl font-bold text-slate-800 dark:text-slate-100">
+            <p className="text-xs font-medium uppercase text-gray-400 dark:text-gray-500">Today's calls</p>
+            <p className="text-3xl font-bold text-gray-800 dark:text-gray-100">
               {data.callsToday}
-              <span className="text-base font-normal text-slate-400 dark:text-slate-500"> / {data.dailyTarget}</span>
+              <span className="text-base font-normal text-gray-400 dark:text-gray-500"> / {data.dailyTarget}</span>
             </p>
           </div>
           <div className="rounded-lg bg-brand-50 p-3 text-brand-600 dark:bg-brand-500/15 dark:text-brand-400">
             <Phone size={22} />
           </div>
         </div>
-        <div className="mt-3 h-2.5 w-full overflow-hidden rounded-full bg-slate-100 dark:bg-slate-700">
+        <div className="mt-3 h-2.5 w-full overflow-hidden rounded-full bg-gray-100 dark:bg-gray-700">
           <div
-            className="h-full rounded-full bg-brand-500 transition-all"
+            className="h-full rounded-full bg-brand-gradient transition-all"
             style={{ width: `${Math.min(100, data.targetProgress)}%` }}
           />
         </div>
-        <p className="mt-1 text-xs text-slate-400 dark:text-slate-500">{data.targetProgress}% of daily target</p>
+        <p className="mt-1 text-xs text-gray-400 dark:text-gray-500">{data.targetProgress}% of daily target</p>
       </Card>
 
       <div className="grid grid-cols-2 gap-2.5 sm:gap-3 lg:grid-cols-5">
@@ -68,15 +68,15 @@ export function TelecallerDashboard() {
       </div>
 
       <Card className="p-4">
-        <h2 className="mb-3 text-sm font-semibold text-slate-700 dark:text-slate-200">Today's call outcomes</h2>
+        <h2 className="mb-3 text-sm font-semibold text-gray-700 dark:text-gray-200">Today's call outcomes</h2>
         {data.dispositionToday.length === 0 ? (
-          <p className="py-6 text-center text-sm text-slate-400 dark:text-slate-500">No calls logged yet today</p>
+          <p className="py-6 text-center text-sm text-gray-400 dark:text-gray-500">No calls logged yet today</p>
         ) : (
           <div className="flex flex-wrap gap-2">
             {data.dispositionToday.map((d) => (
               <span
                 key={d._id}
-                className="rounded-lg bg-slate-100 px-3 py-1.5 text-sm text-slate-700 dark:bg-slate-800 dark:text-slate-200"
+                className="rounded-lg bg-gray-100 px-3 py-1.5 text-sm text-gray-700 dark:bg-gray-800 dark:text-gray-200"
               >
                 {DISPOSITION_LABELS[d._id as Disposition] ?? d._id}: <b>{d.count}</b>
               </span>

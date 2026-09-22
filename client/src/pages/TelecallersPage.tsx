@@ -51,7 +51,7 @@ export function TelecallersPage() {
   return (
     <div className="space-y-4">
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <h1 className="text-xl font-bold text-slate-800 dark:text-slate-100">Users</h1>
+        <h1 className="text-xl font-bold text-gray-800 dark:text-gray-100">Users</h1>
         <Button
           onClick={() => {
             setEditing(null);
@@ -63,7 +63,7 @@ export function TelecallersPage() {
       </div>
 
       <div className="relative sm:max-w-sm">
-        <Search className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-500" size={16} />
+        <Search className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 dark:text-gray-500" size={16} />
         <Input
           className="pl-9"
           placeholder="Search by name, email, phone"
@@ -78,7 +78,7 @@ export function TelecallersPage() {
         ) : !data?.data.length ? (
           <EmptyState title="No users yet" hint="Add your first user to get started." />
         ) : (
-          <div className="divide-y divide-slate-100 dark:divide-slate-800">
+          <div className="divide-y divide-gray-100 dark:divide-gray-800">
             {data.data.map((u) => (
               <div key={u._id} className="p-3 sm:p-4">
                 <div className="flex items-start gap-3">
@@ -87,13 +87,13 @@ export function TelecallersPage() {
                   </div>
                   <div className="min-w-0 flex-1">
                     <div className="flex flex-wrap items-center gap-2">
-                      <p className="min-w-0 truncate font-medium text-slate-800 dark:text-slate-100">{u.name}</p>
-                      <Badge className={u.isActive ? 'bg-emerald-100 text-emerald-700' : 'bg-slate-200 text-slate-500 dark:bg-slate-700 dark:text-slate-300'}>
+                      <p className="min-w-0 truncate font-medium text-gray-800 dark:text-gray-100">{u.name}</p>
+                      <Badge className={u.isActive ? 'bg-emerald-100 text-emerald-700' : 'bg-gray-200 text-gray-500 dark:bg-gray-700 dark:text-gray-300'}>
                         {u.isActive ? 'Active' : 'Inactive'}
                       </Badge>
                     </div>
-                    <p className="truncate text-sm text-slate-500 dark:text-slate-400">{u.email}</p>
-                    <p className="text-xs text-slate-400 dark:text-slate-500">
+                    <p className="truncate text-sm text-gray-500 dark:text-gray-400">{u.email}</p>
+                    <p className="text-xs text-gray-400 dark:text-gray-500">
                       Target: {u.dailyTarget}/day · Last login {fmtRelative(u.lastLoginAt)}
                     </p>
                   </div>
@@ -111,7 +111,7 @@ export function TelecallersPage() {
                       title={u.isActive ? 'Deactivate' : 'Activate'}
                       onClick={() => setStatus.mutate({ id: u._id, isActive: !u.isActive })}
                     >
-                      <Power size={15} className={u.isActive ? 'text-emerald-600' : 'text-slate-400'} />
+                      <Power size={15} className={u.isActive ? 'text-emerald-600' : 'text-gray-400'} />
                     </Button>
                     <Button size="sm" variant="ghost" title="Delete" onClick={() => handleDelete(u)}>
                       <Trash2 size={15} className="text-rose-500" />
@@ -133,7 +133,7 @@ export function TelecallersPage() {
                     variant="secondary"
                     onClick={() => setStatus.mutate({ id: u._id, isActive: !u.isActive })}
                   >
-                    <Power size={14} className={u.isActive ? 'text-emerald-600' : 'text-slate-400'} />
+                    <Power size={14} className={u.isActive ? 'text-emerald-600' : 'text-gray-400'} />
                     {u.isActive ? 'On' : 'Off'}
                   </Button>
                   <Button size="sm" variant="secondary" onClick={() => handleDelete(u)}>
