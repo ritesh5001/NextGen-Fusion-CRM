@@ -1,28 +1,25 @@
 import { useCallProvider } from './useCallProvider';
 import type { CallProvider } from '@/types';
 
-const LABELS: Record<CallProvider, string> = { twilio: 'Twilio', telecmi: 'TeleCMI' };
+const LABELS: Record<CallProvider, string> = { twilio: 'Twilio', telecmi: 'TeleCMI', telnyx: 'Telnyx' };
 
 /**
  * Lets a telecaller pick which telephony backend they dial with, and — for
  * TeleCMI — whether the call runs through the browser or rings their own phone.
- * Renders nothing unless more than one option is actually available to them.
+ * Renders nothing unless there is an actual choice to make.
  */
 export function ProviderSwitcher({ className = '' }: { className?: string }) {
-  const { provider, mode, switchTo, twilioReady, telecmiReady, canSwitch } = useCallProvider();
+  const { provider, mode, switchTo, available, canSwitch } = useCallProvider();
 
-  if (!canSwitch && !telecmiReady) return null;
-
-  const options: CallProvider[] = [];
-  if (twilioReady) options.push('twilio');
-  if (telecmiReady) options.push('telecmi');
-  if (options.length === 0) return null;
+  // A lone TeleCMI still has the ring-my-phone choice; anything else alone doesn't.
+  const telecmiOnly = available.length === 1 && available[0] === 'telecmi';
+  if (!canSwitch && !telecmiOnly) return null;
 
   return (
     <div className={`flex flex-wrap items-center gap-2 ${className}`}>
-      {options.length > 1 && (
+      {available.length > 1 && (
         <div className="inline-flex rounded-lg border border-gray-200 bg-gray-50 p-0.5 dark:border-gray-700 dark:bg-gray-800">
-          {options.map((p) => (
+          {available.map((p) => (
             <button
               key={p}
               type="button"

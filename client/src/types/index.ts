@@ -1,7 +1,7 @@
 export type Role = 'superadmin' | 'telecaller';
 
 /** Telephony backends a call can be placed through. */
-export type CallProvider = 'twilio' | 'telecmi';
+export type CallProvider = 'twilio' | 'telecmi' | 'telnyx';
 
 export type Density = 'comfortable' | 'compact';
 
@@ -25,6 +25,8 @@ export interface User {
   twilioNumber?: string;
   /** TeleCMI agent id assigned by the admin ('' when none). The password never leaves the server. */
   telecmiUserId?: string;
+  /** Telnyx caller number assigned by the admin ('' when none). */
+  telnyxNumber?: string;
   /** Which provider this user prefers to dial with. */
   callProvider?: CallProvider;
   // The workspace a telecaller belongs to (absent for the superadmin).
@@ -150,6 +152,9 @@ export interface CallLog {
   mode?: 'softphone' | 'click_to_call';
   telecmiCallId?: string;
   telecmiRequestId?: string;
+  /** Telnyx call leg/session ids (webhooks and recordings are keyed by these). */
+  telnyxCallLegId?: string;
+  telnyxCallSessionId?: string;
   /** TeleCMI recordings are referenced by file name, streamed via our proxy. */
   recordingFile?: string;
   phone?: 'phone1' | 'phone2' | 'phone3';

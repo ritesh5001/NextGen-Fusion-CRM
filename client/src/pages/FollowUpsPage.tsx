@@ -23,11 +23,7 @@ export function FollowUpsPage() {
   const [scope, setScope] = useState('today');
   const { data, isLoading } = useFollowUps({ scope });
   const markDone = useMarkFollowUpDone();
-  const { config: callConfig, ready: callingEnabled, provider: callProvider } = useCallProvider();
-  const needsCallerId =
-    callProvider === 'telecmi'
-      ? (callConfig?.providers?.telecmi?.configured ?? false) && !(callConfig?.providers?.telecmi?.hasAgent ?? false)
-      : (callConfig?.configured ?? false) && !(callConfig?.hasCallerId ?? false);
+  const { ready: callingEnabled, needsAssignment: needsCallerId, defaultCountryCode } = useCallProvider();
   const startCall = useCallStore((s) => s.startCall);
   const callPhase = useCallStore((s) => s.phase);
   const callBusy = callPhase === 'connecting' || callPhase === 'ringing' || callPhase === 'in_call';
@@ -96,7 +92,7 @@ export function FollowUpsPage() {
                               startCall({
                                 leadId: lead._id,
                                 name: lead.name,
-                                phone: toE164(lead.phone, lead.country, callConfig?.defaultCountryCode),
+                                phone: toE164(lead.phone, lead.country, defaultCountryCode),
                               })
                             }
                           >

@@ -5,7 +5,7 @@ export type UserRole = 'superadmin' | 'telecaller';
 export const USER_ROLES: UserRole[] = ['superadmin', 'telecaller'];
 
 /** Telephony backends a call can be placed through. */
-export const CALL_PROVIDERS = ['twilio', 'telecmi'] as const;
+export const CALL_PROVIDERS = ['twilio', 'telecmi', 'telnyx'] as const;
 export type CallProvider = (typeof CALL_PROVIDERS)[number];
 
 export interface IUser {
@@ -25,6 +25,12 @@ export interface IUser {
   // Cached click-to-call agent token (valid 30 days) + when it was issued.
   telecmiAgentToken?: string;
   telecmiTokenAt?: Date;
+  // Telnyx caller ID the admin assigned this telecaller (E.164), '' if none.
+  telnyxNumber: string;
+  // This user's Telnyx telephony credential (created on demand) and the
+  // connection it was created on — a new connection means a new credential.
+  telnyxCredentialId?: string;
+  telnyxCredentialConnectionId?: string;
   // Which provider this telecaller prefers to dial with.
   callProvider: CallProvider;
   // The workspace a telecaller belongs to. Absent for the superadmin, who is
@@ -58,6 +64,9 @@ const userSchema = new Schema<IUser, UserModel, IUserMethods>(
     telecmiPassword: { type: String, default: '', select: false },
     telecmiAgentToken: { type: String, default: '', select: false },
     telecmiTokenAt: { type: Date },
+    telnyxNumber: { type: String, trim: true, default: '' },
+    telnyxCredentialId: { type: String, default: '', select: false },
+    telnyxCredentialConnectionId: { type: String, default: '', select: false },
     callProvider: { type: String, enum: CALL_PROVIDERS, default: 'twilio' },
     workspace: { type: Schema.Types.ObjectId, ref: 'Workspace', index: true },
     createdBy: { type: Schema.Types.ObjectId, ref: 'User' },
@@ -74,6 +83,8 @@ userSchema.set('toJSON', {
     // Secrets are select:false, but never echo them even when explicitly selected.
     delete r.telecmiPassword;
     delete r.telecmiAgentToken;
+    delete r.telnyxCredentialId;
+    delete r.telnyxCredentialConnectionId;
     delete r.__v;
     return r;
   },

@@ -95,6 +95,17 @@ export const setUserTwilioNumber = asyncHandler(async (req: Request, res: Respon
   res.json({ success: true, user });
 });
 
+// Assign (or clear, with '') the Telnyx caller-ID number a telecaller dials from.
+export const setUserTelnyxNumber = asyncHandler(async (req: Request, res: Response) => {
+  const user = await User.findOneAndUpdate(
+    { _id: req.params.id, role: 'telecaller', workspace: req.workspaceId },
+    { $set: { telnyxNumber: req.body.telnyxNumber } },
+    { new: true }
+  );
+  if (!user) throw ApiError.notFound('Telecaller not found');
+  res.json({ success: true, user });
+});
+
 // PATCH /users/:id/telecmi — assign (or clear) this telecaller's TeleCMI agent.
 // Changing the credentials invalidates any cached click-to-call token so the next
 // call re-authenticates instead of using a token minted for the old agent.

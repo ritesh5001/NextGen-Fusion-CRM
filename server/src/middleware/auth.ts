@@ -12,6 +12,9 @@ declare global {
       user?: { id: string; role: UserRole; name: string; workspace: string };
       // The active workspace resolved for this request (see middleware/workspace.ts).
       workspaceId?: string;
+      // Exact received bytes, kept only for webhooks whose signature covers the
+      // raw body (Telnyx) — see app.ts.
+      rawBody?: Buffer;
     }
   }
 }

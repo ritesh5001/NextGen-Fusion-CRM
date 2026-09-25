@@ -100,3 +100,16 @@ export function useSetTelecallerTwilioNumber() {
     onSuccess: () => qc.invalidateQueries({ queryKey: ['users'] }),
   });
 }
+
+/** Assign (or clear, with '') the Telnyx caller-ID number a telecaller dials from. */
+export function useSetTelecallerTelnyxNumber() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: async ({ id, telnyxNumber }: { id: string; telnyxNumber: string }) =>
+      (await api.patch(`/users/${id}/telnyx-number`, { telnyxNumber })).data,
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['users'] });
+      qc.invalidateQueries({ queryKey: ['call-config'] });
+    },
+  });
+}

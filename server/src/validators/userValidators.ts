@@ -45,5 +45,17 @@ export const setTwilioNumberSchema = z.object({
     .default(''),
 });
 
+export const setTelnyxNumberSchema = z.object({
+  // E.164, or empty string to unassign.
+  telnyxNumber: z
+    .string()
+    .trim()
+    .refine(
+      (v) => v === '' || /^\+\d{6,15}$/.test(v),
+      'Must be a valid number in E.164 format (e.g. +14155551234)'
+    )
+    .default(''),
+});
+
 export type CreateUserInput = z.infer<typeof createUserSchema>;
 export type UpdateUserInput = z.infer<typeof updateUserSchema>;

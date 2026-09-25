@@ -5,7 +5,15 @@ import { env } from '../config/env.js';
 import { Integration, type IntegrationDoc } from '../models/Integration.js';
 import { TWILIO_KEY, listNumbers } from '../services/twilioService.js';
 import { TELECMI_KEY, DEFAULT_SBC_URI, SBC_REGIONS, DEFAULT_API_REGION, API_REGIONS, detectApiRegion } from '../services/telecmiService.js';
-import type { UpdateTwilioInput, UpdateTelecmiInput } from '../validators/integrationValidators.js';
+import {
+  TELNYX_KEY,
+  TelnyxApiError,
+  webhookUrlFor,
+  listCredentialConnections,
+  listNumbers as listTelnyxNumbersFromApi,
+  applyWebhookToConnection,
+} from '../services/telnyxService.js';
+import type { UpdateTwilioInput, UpdateTelecmiInput, UpdateTelnyxInput } from '../validators/integrationValidators.js';
 
 // Fields the admin form sends that are kept secret: blanks mean "leave unchanged",
 // and we never echo their values back to the client.
@@ -144,4 +152,98 @@ export const detectTelecmiRegion = asyncHandler(async (req: Request, res: Respon
 
   const { region, tried } = await detectApiRegion(appId, apiSecret);
   res.json({ success: true, region, tried });
+});
+
+/** Client-safe view of the Telnyx settings — the API key reduced to a "set" flag. */
+function sanitizeTelnyx(doc: IntegrationDoc | null) {
+  return {
+    enabled: doc?.enabled ?? false,
+    configured: Boolean(doc?.apiKey && doc?.connectionId),
+    connectionId: doc?.connectionId ?? '',
+    publicKey: doc?.publicKey ?? '',
+    callerId: doc?.callerId ?? '',
+    recordCalls: doc?.recordCalls ?? true,
+    defaultCountryCode: doc?.defaultCountryCode ?? '',
+    publicServerUrl: doc?.publicServerUrl ?? '',
+    apiKeySet: Boolean(doc?.apiKey),
+    // Recording and failure reasons depend on signed webhooks reaching us.
+    webhookReady: Boolean(doc?.publicKey && webhookUrlFor(doc)),
+    webhookUrl: webhookUrlFor(doc),
+  };
+}
+
+/** Turns a Telnyx API failure into a 4xx the admin panel can show verbatim. */
+function asApiError(e: unknown): never {
+  if (e instanceof TelnyxApiError) {
+    throw e.status >= 500 ? ApiError.serviceUnavailable(e.message) : ApiError.badRequest(e.message);
+  }
+  throw e;
+}
+
+// GET /integrations/telnyx (superadmin) — current Telnyx settings, key masked.
+export const getTelnyxIntegration = asyncHandler(async (_req: Request, res: Response) => {
+  const doc = await Integration.findOne({ key: TELNYX_KEY });
+  res.json({ success: true, data: sanitizeTelnyx(doc) });
+});
+
+// PUT /integrations/telnyx (superadmin) — upsert Telnyx settings. A blank `apiKey`
+// keeps the stored key. Switching connection invalidates nothing here: each user's
+// credential records its connection and is recreated on their next token request.
+export const updateTelnyxIntegration = asyncHandler(async (req: Request, res: Response) => {
+  const body = req.body as UpdateTelnyxInput;
+  const doc = (await Integration.findOne({ key: TELNYX_KEY })) ?? new Integration({ key: TELNYX_KEY });
+
+  const plainFields = [
+    'enabled',
+    'connectionId',
+    'publicKey',
+    'callerId',
+    'recordCalls',
+    'defaultCountryCode',
+    'publicServerUrl',
+  ] as const;
+  for (const field of plainFields) {
+    if (body[field] !== undefined) doc.set(field, body[field]);
+  }
+  if (body.apiKey) doc.set('apiKey', body.apiKey);
+
+  if (doc.enabled && !(doc.apiKey && doc.connectionId)) {
+    throw ApiError.badRequest('Add the API key and choose a credential connection before enabling Telnyx.');
+  }
+
+  doc.updatedBy = req.user!.id as unknown as IntegrationDoc['updatedBy'];
+  await doc.save();
+
+  res.json({ success: true, data: sanitizeTelnyx(doc) });
+});
+
+// POST /integrations/telnyx/connections (superadmin) — checks the API key (typed or
+// stored) and returns the account's credential connections for the picker.
+export const listTelnyxConnections = asyncHandler(async (req: Request, res: Response) => {
+  try {
+    const connections = await listCredentialConnections(req.body?.apiKey);
+    res.json({ success: true, data: connections });
+  } catch (e) {
+    asApiError(e);
+  }
+});
+
+// GET /integrations/telnyx/numbers (superadmin) — the account's numbers, for
+// assigning a caller ID to each telecaller.
+export const listTelnyxNumbers = asyncHandler(async (_req: Request, res: Response) => {
+  try {
+    res.json({ success: true, data: await listTelnyxNumbersFromApi() });
+  } catch (e) {
+    asApiError(e);
+  }
+});
+
+// POST /integrations/telnyx/apply-webhook (superadmin) — sets the connection's
+// webhook URL to this server so recordings and hangup reasons reach us.
+export const applyTelnyxWebhook = asyncHandler(async (_req: Request, res: Response) => {
+  try {
+    res.json({ success: true, ...(await applyWebhookToConnection()) });
+  } catch (e) {
+    asApiError(e);
+  }
 });

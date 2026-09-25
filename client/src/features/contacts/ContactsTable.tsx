@@ -140,18 +140,14 @@ function PhoneActions({ phone, lead, slot = 'phone1', big }: { phone: string; le
   const cls = big
     ? 'tap flex items-center justify-center rounded-xl border border-gray-200 p-2.5 dark:border-gray-700'
     : 'rounded p-1.5';
-  const { config: callConfig, ready: callingEnabled, provider: callProvider } = useCallProvider();
+  const { ready: callingEnabled, needsAssignment: needsCallerId, defaultCountryCode } = useCallProvider();
   // "Configured but no number/agent assigned to you" — a gap an admin can fix.
-  const needsCallerId =
-    callProvider === 'telecmi'
-      ? (callConfig?.providers?.telecmi?.configured ?? false) && !(callConfig?.providers?.telecmi?.hasAgent ?? false)
-      : (callConfig?.configured ?? false) && !(callConfig?.hasCallerId ?? false);
   const startCall = useCallStore((s) => s.startCall);
   const phase = useCallStore((s) => s.phase);
   const busy = phase === 'connecting' || phase === 'ringing' || phase === 'in_call';
   const callCls = `${cls} text-brand-600 hover:bg-brand-50 ${big ? 'border-brand-200 bg-brand-50 dark:border-brand-500/40 dark:bg-brand-500/15' : ''}`;
   // Parse with the contact's country (handles missing '+'), else admin default code.
-  const dialNumber = toE164(phone, lead?.country, callConfig?.defaultCountryCode);
+  const dialNumber = toE164(phone, lead?.country, defaultCountryCode);
 
   // Inline number editing (both roles; telecaller scoped to assigned server-side).
   const updateLead = useUpdateLead();

@@ -6,7 +6,7 @@ import { CallRecording } from '../models/CallRecording.js';
 import { Lead } from '../models/Lead.js';
 import { FollowUp } from '../models/FollowUp.js';
 import { getPagination, paginated } from '../utils/pagination.js';
-import { User } from '../models/User.js';
+import { User, CALL_PROVIDERS, type CallProvider } from '../models/User.js';
 import type { LogCallInput, SaveCustomContactInput, ClickToCallInput } from '../validators/callValidators.js';
 import {
   isEnabled as telecmiEnabled,
@@ -16,6 +16,16 @@ import {
   reasonForCdr,
   fetchRecordingMedia as fetchTelecmiRecording,
 } from '../services/telecmiService.js';
+import {
+  isEnabled as telnyxEnabled,
+  getTelnyxSettings,
+  resolveCallerId as resolveTelnyxCallerId,
+  generateLoginToken as generateTelnyxToken,
+  startRecording as startTelnyxRecording,
+  fetchRecordingMedia as fetchTelnyxRecording,
+  reasonForHangup as telnyxHangupReason,
+  TelnyxApiError,
+} from '../services/telnyxService.js';
 import {
   buildDialTwiml,
   generateVoiceToken,
@@ -85,20 +95,26 @@ export const logCall = asyncHandler(async (req: Request, res: Response) => {
     mode: body.mode,
     telecmiCallId: body.telecmiCallId,
     telecmiRequestId: body.telecmiRequestId,
+    telnyxCallLegId: body.telnyxCallLegId,
+    telnyxCallSessionId: body.telnyxCallSessionId,
     phone: body.phone,
     phoneNumber: body.phoneNumber,
     workspace: req.workspaceId,
   });
 
   // Attach a recording if the provider's webhook already landed (see CallRecording).
-  // Twilio stages by CallSid; TeleCMI stages by call id / click-to-call request id.
-  const stagedKey =
+  // Twilio stages by CallSid; TeleCMI by call id / click-to-call request id;
+  // Telnyx by call leg id (with the session id as a fallback).
+  const stagedKeys = (
     body.provider === 'telecmi'
-      ? body.telecmiCallId || body.telecmiRequestId
-      : body.twilioCallSid;
+      ? [body.telecmiCallId, body.telecmiRequestId]
+      : body.provider === 'telnyx'
+        ? [body.telnyxCallLegId, body.telnyxCallSessionId]
+        : [body.twilioCallSid]
+  ).filter((k): k is string => Boolean(k));
 
-  if (stagedKey) {
-    const rec = await CallRecording.findOne({ callSid: stagedKey });
+  if (stagedKeys.length) {
+    const rec = await CallRecording.findOne({ callSid: { $in: stagedKeys } });
     if (rec) {
       // For TeleCMI the staged value is a recording *file name*, not a URL.
       if (rec.recordingUrl) {
@@ -276,14 +292,23 @@ export const streamRecording = asyncHandler(async (req: Request, res: Response) 
   }
   // TeleCMI references recordings by file name and streams them from its own REST
   // API; Twilio gives us a media URL. Either way the credentials stay server-side.
+  // Telnyx's webhook URLs expire, so its recordings are re-resolved by call leg.
   const media =
     call.provider === 'telecmi'
       ? call.recordingFile
         ? await fetchTelecmiRecording(call.recordingFile)
         : null
-      : call.recordingUrl
-        ? await fetchRecordingMedia(call.recordingUrl)
-        : null;
+      : call.provider === 'telnyx'
+        ? call.recordingUrl
+          ? await fetchTelnyxRecording({
+              callLegId: call.telnyxCallLegId,
+              callSessionId: call.telnyxCallSessionId,
+              fallbackUrl: call.recordingUrl,
+            })
+          : null
+        : call.recordingUrl
+          ? await fetchRecordingMedia(call.recordingUrl)
+          : null;
 
   if (!media) {
     const hasRecording = call.provider === 'telecmi' ? call.recordingFile : call.recordingUrl;
@@ -312,14 +337,25 @@ export const getCallConfig = asyncHandler(async (req: Request, res: Response) =>
   const cmiCreds = cmiConfigured ? await resolveAgentCredentials(req.user!.id) : null;
   const cmiSettings = await getTelecmiSettings();
 
+  // Telnyx for this same user: configured globally AND a caller number to dial from.
+  const tnxConfigured = await telnyxEnabled();
+  const tnxHasCallerId = tnxConfigured && Boolean(await resolveTelnyxCallerId(req.user!.id));
+  const tnxSettings = await getTelnyxSettings();
+
   const user = await User.findById(req.user!.id).select('callProvider');
   const twilioReady = configured && hasCallerId;
   const telecmiReady = cmiConfigured && Boolean(cmiCreds);
+  const telnyxReady = tnxConfigured && tnxHasCallerId;
+  const ready: Record<CallProvider, boolean> = { twilio: twilioReady, telecmi: telecmiReady, telnyx: telnyxReady };
 
   // The stored preference only counts if that provider is actually usable; otherwise
   // fall back to whichever one is, so a telecaller is never stranded on a dead provider.
-  const preferred = user?.callProvider === 'telecmi' ? 'telecmi' : 'twilio';
-  const active = preferred === 'telecmi' && telecmiReady ? 'telecmi' : twilioReady ? 'twilio' : telecmiReady ? 'telecmi' : preferred;
+  const preferred: CallProvider = CALL_PROVIDERS.includes(user?.callProvider as CallProvider)
+    ? (user!.callProvider as CallProvider)
+    : 'twilio';
+  const active: CallProvider = ready[preferred]
+    ? preferred
+    : (['twilio', 'telnyx', 'telecmi'] as const).find((p) => ready[p]) ?? preferred;
 
   res.json({
     success: true,
@@ -345,6 +381,12 @@ export const getCallConfig = asyncHandler(async (req: Request, res: Response) =>
         // Click-to-call needs a phone for TeleCMI to ring first.
         clickToCallReady: telecmiReady,
       },
+      telnyx: {
+        enabled: telnyxReady,
+        configured: tnxConfigured,
+        hasCallerId: tnxHasCallerId,
+        defaultCountryCode: tnxSettings?.defaultCountryCode ?? '',
+      },
     },
   });
 });
@@ -353,7 +395,7 @@ export const getCallConfig = asyncHandler(async (req: Request, res: Response) =>
 // Self-service (not admin-only): every user chooses their own preference, and it's
 // stored on their User doc so it follows them across devices.
 export const setCallProvider = asyncHandler(async (req: Request, res: Response) => {
-  const provider = req.body.provider as 'twilio' | 'telecmi';
+  const provider = req.body.provider as CallProvider;
   await User.updateOne({ _id: req.user!.id }, { $set: { callProvider: provider } });
   res.json({ success: true, provider });
 });
@@ -567,5 +609,95 @@ export const handleStatus = asyncHandler(async (req: Request, res: Response) => 
       { upsert: true }
     );
   }
+  res.json({ success: true });
+});
+
+// GET /calls/telnyx/token — mints a Telnyx WebRTC login token (JWT, valid 24h) for
+// the authenticated user, plus the caller ID they dial from. The caller ID is the
+// admin-assigned number, never something the browser chooses.
+export const getTelnyxToken = asyncHandler(async (req: Request, res: Response) => {
+  if (!(await telnyxEnabled())) throw ApiError.serviceUnavailable('Telnyx calling is not configured');
+  const callerId = await resolveTelnyxCallerId(req.user!.id);
+  if (!callerId) {
+    throw ApiError.forbidden('No Telnyx number is assigned to you. Ask an admin to assign one.');
+  }
+  try {
+    const { token, fresh } = await generateTelnyxToken(req.user!.id);
+    const settings = await getTelnyxSettings();
+    res.json({ success: true, token, callerId, fresh, defaultCountryCode: settings?.defaultCountryCode ?? '' });
+  } catch (e) {
+    if (e instanceof TelnyxApiError) throw ApiError.serviceUnavailable(e.message);
+    throw e;
+  }
+});
+
+// Maps Telnyx's hangup cause onto the same dial statuses the client already
+// understands from Twilio (completed | busy | no-answer | failed | canceled).
+function telnyxDialStatus(cause: string): string {
+  switch (cause) {
+    case 'normal_clearing':
+      return 'completed';
+    case 'user_busy':
+      return 'busy';
+    case 'timeout':
+    case 'no_answer':
+      return 'no-answer';
+    case 'originator_cancel':
+      return 'canceled';
+    default:
+      return 'failed';
+  }
+}
+
+// POST /calls/telnyx/webhook — call events for the credential connection. Public
+// (Telnyx can't carry our JWT); authenticated by the Ed25519 signature checked in
+// callRoutes. Starts recording on answer, stages hangup reasons and recordings by
+// call leg id so `logCall` / the dial-status poll can pick them up.
+export const handleTelnyxWebhook = asyncHandler(async (req: Request, res: Response) => {
+  const settings = await getTelnyxSettings();
+  const event = (req.body as { data?: { event_type?: string; payload?: Record<string, unknown> } })?.data;
+  const type = event?.event_type ?? '';
+  const p = event?.payload ?? {};
+  const str = (v: unknown) => (v == null ? '' : String(v));
+
+  // Other connections on the same account aren't ours to act on.
+  const connectionId = str(p.connection_id);
+  if (settings?.connectionId && connectionId && connectionId !== String(settings.connectionId)) {
+    res.json({ success: true });
+    return;
+  }
+
+  const legId = str(p.call_leg_id);
+  const sessionId = str(p.call_session_id);
+
+  if (type === 'call.answered') {
+    // Fire-and-forget: Telnyx wants a prompt 2xx, and recording is best-effort.
+    const callControlId = str(p.call_control_id);
+    if (settings?.recordCalls && callControlId) void startTelnyxRecording(callControlId);
+    if (legId) await CallRecording.updateOne({ callSid: legId }, { $set: { status: 'answered' } }, { upsert: true });
+  } else if (type === 'call.hangup' && legId) {
+    const cause = str(p.hangup_cause);
+    const dialStatus = telnyxDialStatus(cause);
+    const reason =
+      telnyxHangupReason(cause, str(p.sip_hangup_cause)) ??
+      (dialStatus === 'failed' ? 'Call failed. The number may be wrong or unreachable.' : undefined);
+    await CallRecording.updateOne(
+      { callSid: legId },
+      { $set: { dialStatus, status: 'completed', ...(reason ? { dialReason: reason } : {}) } },
+      { upsert: true }
+    );
+  } else if (type === 'call.recording.saved' && legId) {
+    const urls = (p.recording_urls ?? {}) as { mp3?: string; wav?: string };
+    const recordingUrl = urls.mp3 || urls.wav;
+    if (recordingUrl) {
+      await CallRecording.updateOne({ callSid: legId }, { $set: { recordingUrl } }, { upsert: true });
+      // If the outcome was already logged, attach it now. The stored URL expires;
+      // playback re-resolves a fresh link by leg id (see streamRecording).
+      const match: Record<string, string>[] = [{ telnyxCallLegId: legId }];
+      if (sessionId) match.push({ telnyxCallSessionId: sessionId });
+      await CallLog.updateOne({ provider: 'telnyx', $or: match }, { $set: { recordingUrl } });
+    }
+  }
+
   res.json({ success: true });
 });

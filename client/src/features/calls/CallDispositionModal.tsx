@@ -71,6 +71,8 @@ export function CallDispositionModal() {
         mode: pending.mode,
         telecmiCallId: pending.telecmiCallId,
         telecmiRequestId: pending.telecmiRequestId,
+        telnyxCallLegId: pending.telnyxCallLegId,
+        telnyxCallSessionId: pending.telnyxCallSessionId,
         phone: pending.phoneSlot,
         phoneNumber: phone,
       },

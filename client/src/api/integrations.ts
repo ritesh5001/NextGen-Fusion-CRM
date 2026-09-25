@@ -138,3 +138,99 @@ export function useDetectTelecmiRegion() {
         .data,
   });
 }
+
+/** Client-safe Telnyx settings (the API key reduced to a `*Set` flag). */
+export interface TelnyxIntegration {
+  enabled: boolean;
+  configured: boolean;
+  connectionId: string;
+  publicKey: string;
+  callerId: string;
+  recordCalls: boolean;
+  defaultCountryCode: string;
+  publicServerUrl: string;
+  apiKeySet: boolean;
+  /** Public key + public URL are set, so signed webhooks can reach the server. */
+  webhookReady: boolean;
+  webhookUrl: string;
+}
+
+export interface TelnyxIntegrationUpdate {
+  enabled?: boolean;
+  apiKey?: string;
+  connectionId?: string;
+  publicKey?: string;
+  callerId?: string;
+  recordCalls?: boolean;
+  defaultCountryCode?: string;
+  publicServerUrl?: string;
+}
+
+export interface TelnyxConnection {
+  id: string;
+  name: string;
+  active: boolean;
+  webhookUrl: string;
+  hasOutboundProfile: boolean;
+}
+
+export interface TelnyxNumber {
+  phoneNumber: string;
+  connectionId: string;
+  connectionName: string;
+  /** Assigned to the connection the softphone uses. */
+  onConnection: boolean;
+}
+
+export function useTelnyxIntegration() {
+  return useQuery({
+    queryKey: ['telnyx-integration'],
+    queryFn: async () => {
+      const { data } = await api.get<{ success: boolean; data: TelnyxIntegration }>('/integrations/telnyx');
+      return data.data;
+    },
+  });
+}
+
+export function useUpdateTelnyxIntegration() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: async (payload: TelnyxIntegrationUpdate) =>
+      (await api.put<{ success: boolean; data: TelnyxIntegration }>('/integrations/telnyx', payload)).data.data,
+    onSuccess: (data) => {
+      qc.setQueryData(['telnyx-integration'], data);
+      qc.invalidateQueries({ queryKey: ['call-config'] });
+      qc.invalidateQueries({ queryKey: ['telnyx-numbers'] });
+    },
+  });
+}
+
+/** Checks an API key (typed, or the saved one) and lists its credential connections. */
+export function useTelnyxConnections() {
+  return useMutation({
+    mutationFn: async (apiKey?: string) =>
+      (await api.post<{ success: boolean; data: TelnyxConnection[] }>('/integrations/telnyx/connections', { apiKey }))
+        .data.data,
+  });
+}
+
+/** The account's numbers, for assigning a caller ID to each telecaller. */
+export function useTelnyxNumbers(enabled: boolean) {
+  return useQuery({
+    queryKey: ['telnyx-numbers'],
+    enabled,
+    queryFn: async () => {
+      const { data } = await api.get<{ success: boolean; data: TelnyxNumber[] }>('/integrations/telnyx/numbers');
+      return data.data;
+    },
+  });
+}
+
+/** Points the saved connection's webhooks at this server. */
+export function useApplyTelnyxWebhook() {
+  return useMutation({
+    mutationFn: async () =>
+      (await api.post<{ success: boolean; connectionId: string; webhookUrl: string }>('/integrations/telnyx/apply-webhook'))
+        .data,
+  });
+}

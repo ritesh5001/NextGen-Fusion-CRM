@@ -1,7 +1,7 @@
 import { Schema, model, Types, type InferSchemaType, type HydratedDocument } from 'mongoose';
 
 // Singleton settings document(s) for third-party integrations, keyed by `key`.
-// Currently only 'twilio'. Credentials live here (managed from the admin panel)
+// One doc per provider: 'twilio', 'telecmi', 'telnyx'. Credentials live here (managed from the admin panel)
 // instead of env vars. Secrets are never returned to the client raw — see
 // `integrationController.sanitizeTwilio`.
 const integrationSchema = new Schema(
@@ -25,6 +25,13 @@ const integrationSchema = new Schema(
     // Which TeleCMI CHUB platform this account lives on — 'india' or 'global'.
     // Every REST endpoint differs between them (see telecmiService).
     apiRegion: { type: String, enum: ['india', 'global'], default: 'india' },
+    // Telnyx credentials — used when `key` is 'telnyx'. The v2 API key mints
+    // per-user WebRTC tokens; `connectionId` is the Credential Connection the
+    // softphone logs in through; `publicKey` (Ed25519, base64) verifies webhooks.
+    // `callerId` above doubles as Telnyx's default/admin caller number.
+    apiKey: { type: String, default: '' }, // secret
+    connectionId: { type: String, default: '' },
+    publicKey: { type: String, default: '' },
     // Call behaviour.
     recordCalls: { type: Boolean, default: true },
     // Prepended to dialled numbers that have no country code (e.g. '+91').

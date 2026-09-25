@@ -33,7 +33,23 @@ export interface CallConfig {
       defaultCountryCode?: string;
       clickToCallReady: boolean;
     };
+    /** Optional: servers from before the Telnyx integration don't send it. */
+    telnyx?: { enabled: boolean; configured: boolean; hasCallerId: boolean; defaultCountryCode?: string };
   };
+}
+
+/** A Telnyx WebRTC login (JWT, valid 24h) plus the caller ID this user dials from. */
+export interface TelnyxLogin {
+  token: string;
+  callerId: string;
+  /** The credential was just created — Telnyx can take a few seconds to accept it. */
+  fresh: boolean;
+  defaultCountryCode?: string;
+}
+
+export async function fetchTelnyxToken(): Promise<TelnyxLogin> {
+  const { data } = await api.get<{ success: boolean } & TelnyxLogin>('/calls/telnyx/token');
+  return { token: data.token, callerId: data.callerId, fresh: data.fresh, defaultCountryCode: data.defaultCountryCode };
 }
 
 /** The TeleCMI SIP credentials this user's browser softphone registers with. */
@@ -134,6 +150,8 @@ interface LogCallVars {
   mode?: 'softphone' | 'click_to_call';
   telecmiCallId?: string;
   telecmiRequestId?: string;
+  telnyxCallLegId?: string;
+  telnyxCallSessionId?: string;
   phone?: 'phone1' | 'phone2' | 'phone3';
   phoneNumber?: string;
 }

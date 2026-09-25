@@ -28,7 +28,18 @@ export function createApp() {
       allowedHeaders: ['Content-Type', 'Authorization', 'X-Workspace-Id'],
     })
   );
-  app.use(express.json({ limit: '1mb' }));
+  app.use(
+    express.json({
+      limit: '1mb',
+      // Telnyx signs the exact body bytes, so keep them for that one webhook;
+      // re-serialised JSON would never verify.
+      verify: (req, _res, buf) => {
+        if ((req as express.Request).originalUrl?.startsWith('/api/v1/calls/telnyx/webhook')) {
+          (req as express.Request).rawBody = Buffer.from(buf);
+        }
+      },
+    })
+  );
   app.use(express.urlencoded({ extended: true }));
   if (!env.isProd) app.use(morgan('dev'));
 

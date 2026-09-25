@@ -20,6 +20,8 @@ export function useCallProvider() {
 
   const twilioReady = config?.providers?.twilio?.enabled ?? config?.enabled ?? false;
   const telecmiReady = config?.providers?.telecmi?.enabled ?? false;
+  const telnyxReady = config?.providers?.telnyx?.enabled ?? false;
+  const readyBy: Record<CallProvider, boolean> = { twilio: twilioReady, telecmi: telecmiReady, telnyx: telnyxReady };
 
   // Follow the server's choice of active provider. It already falls back to a
   // usable provider when the preferred one isn't available, so the telecaller is
@@ -39,7 +41,17 @@ export function useCallProvider() {
     if (config?.preferredProvider !== next) setPreference.mutate(next);
   }
 
-  const ready = provider === 'telecmi' ? telecmiReady : twilioReady;
+  /** Providers this user can dial with right now, in switcher order. */
+  const available = (['twilio', 'telnyx', 'telecmi'] as const).filter((p) => readyBy[p]);
+
+  // "Configured account-wide, but nothing assigned to *you*" — a gap an admin can
+  // fix on the Integrations page, as opposed to the provider not being set up.
+  const needsAssignment =
+    provider === 'telecmi'
+      ? (config?.providers?.telecmi?.configured ?? false) && !(config?.providers?.telecmi?.hasAgent ?? false)
+      : provider === 'telnyx'
+        ? (config?.providers?.telnyx?.configured ?? false) && !(config?.providers?.telnyx?.hasCallerId ?? false)
+        : (config?.configured ?? false) && !(config?.hasCallerId ?? false);
 
   return {
     config,
@@ -47,16 +59,17 @@ export function useCallProvider() {
     mode,
     switchTo,
     /** The active provider can place a call right now. */
-    ready,
+    ready: readyBy[provider],
     /** Any provider at all can dial — used to decide softphone vs `tel:` fallback. */
-    anyReady: twilioReady || telecmiReady,
+    anyReady: available.length > 0,
     twilioReady,
     telecmiReady,
-    /** Both configured → show the switcher. */
-    canSwitch: twilioReady && telecmiReady,
+    telnyxReady,
+    available,
+    /** More than one provider usable → show the switcher. */
+    canSwitch: available.length > 1,
+    needsAssignment,
     defaultCountryCode:
-      (provider === 'telecmi'
-        ? config?.providers?.telecmi?.defaultCountryCode
-        : config?.providers?.twilio?.defaultCountryCode) ?? config?.defaultCountryCode ?? '',
+      config?.providers?.[provider]?.defaultCountryCode ?? config?.defaultCountryCode ?? '',
   };
 }

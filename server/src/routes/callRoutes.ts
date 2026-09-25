@@ -10,6 +10,7 @@ import {
   setCallProviderSchema,
 } from '../validators/callValidators.js';
 import { isEnabled, validateSignature } from '../services/twilioService.js';
+import { validateWebhook as validateTelnyxWebhook } from '../services/telnyxService.js';
 import { ApiError } from '../utils/ApiError.js';
 
 const router = Router();
@@ -36,6 +37,18 @@ router.post('/dial-status', twilioWebhook, ctrl.handleDialStatus);
 // authenticates it by matching the configured app id on the payload itself.
 router.post('/telecmi/cdr', ctrl.handleTelecmiCdr);
 
+// Public Telnyx call-event webhook. Signed with the account's Ed25519 key over the
+// raw body (captured in app.ts); anything unsigned or stale is rejected.
+async function telnyxWebhook(req: Request, _res: Response, next: NextFunction) {
+  try {
+    if (!(await validateTelnyxWebhook(req))) return next(ApiError.forbidden('Invalid Telnyx signature'));
+    next();
+  } catch (err) {
+    next(err);
+  }
+}
+router.post('/telnyx/webhook', telnyxWebhook, ctrl.handleTelnyxWebhook);
+
 // Everything below requires an authenticated user in an active workspace.
 router.use(authenticate, resolveWorkspace, requireWorkspace);
 
@@ -44,6 +57,7 @@ router.get('/token', ctrl.getVoiceToken);
 // TeleCMI: the caller's own softphone credentials, and the click-to-call trigger.
 router.patch('/provider', validate(setCallProviderSchema), ctrl.setCallProvider);
 router.get('/telecmi/credentials', ctrl.getTelecmiCredentials);
+router.get('/telnyx/token', ctrl.getTelnyxToken);
 router.post('/telecmi/click-to-call', validate(clickToCallSchema), ctrl.telecmiClickToCall);
 router.get('/dial-status/:callSid', ctrl.getDialStatus);
 router.get('/:id/recording', ctrl.streamRecording);

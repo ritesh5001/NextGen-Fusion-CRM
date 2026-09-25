@@ -376,10 +376,48 @@ authenticates, so omitting them 400s regardless of credentials.
   add → type **call report**, method **POST**.
 - **Recordings** are referenced by *file name* (`CallLog.recordingFile`) and streamed through the same
   `GET /calls/:id/recording` proxy, which branches on `CallLog.provider`.
-- `CallLog` carries `provider (twilio|telecmi)`, `mode (softphone|click_to_call)`, `telecmiCallId`,
+- `CallLog` carries `provider (twilio|telecmi|telnyx)`, `mode (softphone|click_to_call)`, `telecmiCallId`,
   `telecmiRequestId`. Client state lives in the same `store/call.ts`, which branches per provider;
-  `features/calls/useCallProvider.ts` is the single source of truth for "which backend am I on" and
-  `ProviderSwitcher.tsx` is the UI.
+  `features/calls/useCallProvider.ts` is the single source of truth for "which backend am I on" (incl.
+  `needsAssignment`: configured, but nothing assigned to *you*) and `ProviderSwitcher.tsx` is the UI.
+
+## Telephony provider #3 — Telnyx
+
+Runs **alongside** Twilio and TeleCMI; each user picks one in `ProviderSwitcher` (only providers usable
+for them are listed). Configured entirely from the admin panel (`features/integrations/TelnyxPanel.tsx`,
+Integration doc `key:'telnyx'`), never env vars.
+
+- **Config:** `enabled, apiKey (secret, v2), connectionId, publicKey, callerId, recordCalls,
+  defaultCountryCode, publicServerUrl`. `GET/PUT /integrations/telnyx` (key masked as `apiKeySet`;
+  enabling is refused until key + connection are set). `POST /integrations/telnyx/connections` tests a
+  typed or saved key and lists credential connections for the picker; `GET /integrations/telnyx/numbers`
+  lists the account's numbers; `POST /integrations/telnyx/apply-webhook` PATCHes the saved connection's
+  `webhook_event_url` to our `/calls/telnyx/webhook` (API v2) so the admin never pastes it by hand.
+- **Auth chain (no SIP password in the browser):** Credential Connection (made once in the Telnyx
+  portal, with an Outbound Voice Profile, **parking off**) → one Telephony Credential per CRM user,
+  created on demand (`User.telnyxCredentialId` + the connection it belongs to, both `select:false`;
+  a changed connection means a new credential) → a JWT from `POST /telephony_credentials/{id}/token`
+  (valid 24h). `GET /calls/telnyx/token` returns `{token, callerId, fresh}`. A deleted/expired credential
+  (404/422) is recreated once automatically. A **fresh** credential needs ~5s before login, so the
+  client waits when `fresh`.
+- **Caller ID** is server-authoritative: `User.telnyxNumber` (`PATCH /users/:id/telnyx-number`), with
+  the superadmin falling back to `callerId`. A telecaller with no number can't dial via Telnyx.
+- **Softphone** (`store/call.ts`, `@telnyx/webrtc`): `TelnyxRTC({login_token})` → `newCall({destinationNumber,
+  callerNumber})`. Remote audio plays through one hidden `<audio id="telnyx-remote-audio">` (speaker via
+  `setSinkId`). Lifecycle comes from `telnyx.notification` / `callUpdate` with lowercase `call.state`
+  (`trying`/`ringing`/`early`/`active`/`hangup`/`destroy`); bound once per client. Failure reasons come
+  from `call.sipCode`. The client re-logs in after 12h so a long-open tab never dials on an expired JWT.
+- **Webhooks:** `POST /calls/telnyx/webhook` is public and verified with **Ed25519 over
+  `${telnyx-timestamp}|${raw body}`** (account public key, 5-minute replay window). This needs the
+  exact bytes, so `app.ts` keeps `req.rawBody` for that path only. Events from other connections are
+  ignored. `call.answered` → `record_start` (mp3, dual) when recording is on; `call.hangup` → stages
+  `dialStatus`/`dialReason` by **call leg id** in `CallRecording` (the generic `/calls/dial-status/:id`
+  poll reads it); `call.recording.saved` → stages the URL and patches the matching CallLog.
+- **Recordings:** the webhook's URLs are pre-signed and expire in minutes, so `GET /calls/:id/recording`
+  re-resolves a fresh `download_urls.mp3` via `GET /recordings?filter[call_leg_id]=` (then session id,
+  then the stored URL) and proxies it.
+- `CallLog` carries `telnyxCallLegId` + `telnyxCallSessionId` (from the SDK's `call.telnyxIDs`); `logCall`
+  attaches a staged recording by either.
 
 ## Dialer, DTMF & custom calls
 

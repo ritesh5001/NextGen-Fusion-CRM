@@ -13,6 +13,7 @@ import { Button } from '@/components/ui/Button';
 import { Input, Label, Select } from '@/components/ui/Field';
 import { Badge, Card, Spinner, Toggle } from '@/components/ui/Misc';
 import { TelecmiPanel } from '@/features/integrations/TelecmiPanel';
+import { TelnyxPanel } from '@/features/integrations/TelnyxPanel';
 
 interface FormState {
   enabled: boolean;
@@ -338,6 +339,8 @@ export function IntegrationsPage() {
       </Card>
 
       <NumberAssignmentCard configured={data?.configured ?? false} />
+
+      <TelnyxPanel />
 
       <TelecmiPanel />
     </div>

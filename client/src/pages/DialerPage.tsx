@@ -15,7 +15,7 @@ import { toE164 } from '@/lib/phone';
  */
 export function DialerPage() {
   const [number, setNumber] = useState('');
-  const { config, ready, provider, telecmiReady, defaultCountryCode } = useCallProvider();
+  const { config, ready, provider, available, defaultCountryCode } = useCallProvider();
   const startCall = useCallStore((s) => s.startCall);
   const phase = useCallStore((s) => s.phase);
   const error = useCallStore((s) => s.error);
@@ -62,7 +62,11 @@ export function DialerPage() {
       ? config && !config.providers?.telecmi?.configured
         ? 'TeleCMI isn’t set up yet — ask your admin to configure it in Integrations.'
         : 'No TeleCMI agent is assigned to you. Ask your admin to assign one on the Integrations page.'
-      : config && !config.configured
+      : provider === 'telnyx'
+        ? config && !config.providers?.telnyx?.configured
+          ? 'Telnyx isn’t set up yet — ask your admin to configure it in Integrations.'
+          : 'No Telnyx number is assigned to you. Ask your admin to assign one on the Integrations page.'
+        : config && !config.configured
         ? 'Browser calling isn’t set up yet — ask your admin to configure Twilio in Integrations.'
         : 'No calling number is assigned to you. Ask your admin to assign one on the Integrations page.';
 
@@ -85,7 +89,7 @@ export function DialerPage() {
       )}
 
       {/* Choose the backend (and, for TeleCMI, browser vs ring-my-phone). */}
-      {(telecmiReady || provider === 'telecmi') && <ProviderSwitcher />}
+      {(available.length > 1 || provider === 'telecmi') && <ProviderSwitcher />}
 
       <Card className="mx-auto w-full max-w-sm p-3 sm:max-w-xs sm:p-4">
         <div className="mb-2 sm:mb-3">

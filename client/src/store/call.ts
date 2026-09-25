@@ -1,11 +1,13 @@
 import { create } from 'zustand';
 import { Call, Device } from '@twilio/voice-sdk';
 import PIOPIY from '@telecmi/piopiyjs';
+import { TelnyxRTC, type Call as TelnyxCall } from '@telnyx/webrtc';
 import { isValidPhoneNumber } from 'libphonenumber-js';
 import {
   fetchVoiceToken,
   fetchDialStatus,
   fetchTelecmiCredentials,
+  fetchTelnyxToken,
   startClickToCall,
   type DialResult,
 } from '@/api/calls';
@@ -62,6 +64,9 @@ export interface PendingDisposition {
   mode: CallMode;
   telecmiCallId?: string;
   telecmiRequestId?: string;
+  /** Telnyx call leg/session ids — its webhooks and recordings are keyed by these. */
+  telnyxCallLegId?: string;
+  telnyxCallSessionId?: string;
   dialStatus?: string; // completed | busy | no-answer | failed | canceled
   resultReason?: string; // human-readable reason shown to the user
 }
@@ -132,6 +137,97 @@ function friendlyPiopiyError(e: { code?: number; status?: string }): string {
   }
 }
 
+/** Maps Telnyx SDK error codes (see TELNYX_ERROR_CODES) onto a clear message. */
+function friendlyTelnyxError(e: { error?: { code?: number; message?: string; description?: string } } | undefined): string {
+  const code = e?.error?.code;
+  switch (code) {
+    case 42001:
+      return 'Microphone permission denied. Allow mic access and try again.';
+    case 42002:
+      return 'No microphone found. Plug one in and try again.';
+    case 46001:
+    case 46002:
+    case 46003:
+      return 'Telnyx login failed. Refresh the page; if it keeps happening, ask your admin to check the Telnyx setup.';
+    case 45001:
+    case 45002:
+    case 45003:
+    case 48001:
+      return 'Connection problem. Check your internet and try again.';
+    default:
+      return e?.error?.description || e?.error?.message || 'Call error. Please try again.';
+  }
+}
+
+/** Why a Telnyx call ended before it connected, from its SIP result. */
+function telnyxEndReason(call: TelnyxCall): string | null {
+  switch (call.sipCode) {
+    case 486:
+    case 600:
+      return 'The line was busy.';
+    case 480:
+    case 408:
+      return 'No answer.';
+    case 404:
+    case 484:
+    case 604:
+      return 'Invalid or unreachable number. Please update it.';
+    case 403:
+      return 'Telnyx refused the call. Ask your admin to check the caller number and outbound voice profile.';
+    case 603:
+      return 'Call rejected by the other end.';
+    case 487:
+      return null; // we cancelled it ourselves
+    default:
+      if (call.sipCode && call.sipCode >= 400) return call.sipReason || 'Call failed. The number may be wrong or unreachable.';
+      return null;
+  }
+}
+
+/** Telnyx logins are valid 24h; re-login well before that on a long-open tab. */
+const TELNYX_LOGIN_MAX_AGE_MS = 12 * 60 * 60 * 1000;
+
+/**
+ * The SDK plays the far end through a media element we own. One hidden element
+ * for the app's lifetime; the speaker chosen on the Device Test page is applied
+ * to it before each call (Chromium only — elsewhere it's the OS default).
+ */
+function telnyxAudioElement(): HTMLAudioElement {
+  const id = 'telnyx-remote-audio';
+  let el = document.getElementById(id) as HTMLAudioElement | null;
+  if (!el) {
+    el = document.createElement('audio');
+    el.id = id;
+    el.autoplay = true;
+    el.hidden = true;
+    document.body.appendChild(el);
+  }
+  return el;
+}
+
+async function applyTelnyxSpeaker() {
+  const { outputDeviceId } = useAudioStore.getState();
+  const el = telnyxAudioElement() as HTMLAudioElement & { setSinkId?: (id: string) => Promise<void> };
+  if (!outputDeviceId || !el.setSinkId) return;
+  try {
+    await el.setSinkId(outputDeviceId);
+  } catch {
+    /* fall back to the default speaker */
+  }
+}
+
+/** Resolve the saved mic's live deviceId (only its label survives a reload). */
+async function resolveMicId(): Promise<string | undefined> {
+  const audio = useAudioStore.getState();
+  if (audio.inputLabel && !audio.inputDeviceId) await audio.refreshDevices();
+  return useAudioStore.getState().inputDeviceId || undefined;
+}
+
+/** The id the dial-status poll is keyed by, whichever provider placed the call. */
+function pendingDialKey(p: PendingDisposition | null): string | undefined {
+  return p?.twilioCallSid ?? p?.telnyxCallLegId;
+}
+
 interface CallState {
   /** Which backend the *current* session dials with, and in which mode. */
   provider: CallProvider;
@@ -139,6 +235,11 @@ interface CallState {
   device: Device | null;
   /** The TeleCMI softphone, created lazily and kept registered with the SBC. */
   piopiy: PIOPIY | null;
+  /** The Telnyx WebRTC client, its live call, and the number this user dials from. */
+  telnyx: TelnyxRTC | null;
+  telnyxCall: TelnyxCall | null;
+  telnyxCallerId: string;
+  telnyxLoginAt: number | null;
   ready: boolean;
   initializing: boolean;
   call: Call | null;
@@ -178,6 +279,10 @@ export const useCallStore = create<CallState>((set, get) => ({
   mode: 'softphone',
   device: null,
   piopiy: null,
+  telnyx: null,
+  telnyxCall: null,
+  telnyxCallerId: '',
+  telnyxLoginAt: null,
   ready: false,
   initializing: false,
   call: null,
@@ -273,6 +378,114 @@ export const useCallStore = create<CallState>((set, get) => ({
           initializing: false,
           ready: false,
           error: e instanceof Error ? e.message : 'Failed to initialize TeleCMI calling',
+        });
+      }
+      return;
+    }
+
+    if (provider === 'telnyx') {
+      const { telnyx, telnyxLoginAt } = get();
+      if (telnyx && telnyxLoginAt && Date.now() - telnyxLoginAt < TELNYX_LOGIN_MAX_AGE_MS) return;
+      if (telnyx) {
+        // Login is getting old — reconnect with a fresh token rather than risk
+        // the socket dropping mid-call when the JWT expires.
+        telnyx.disconnect().catch(() => undefined);
+        set({ telnyx: null, telnyxLoginAt: null });
+      }
+      set({ initializing: true, error: null });
+      try {
+        const login = await fetchTelnyxToken();
+        // A just-created Telnyx credential can take a few seconds to become usable.
+        if (login.fresh) await new Promise((r) => setTimeout(r, 5000));
+
+        const client = new TelnyxRTC({ login_token: login.token });
+        client.remoteElement = telnyxAudioElement();
+
+        await new Promise<void>((resolve, reject) => {
+          const timer = setTimeout(() => reject(new Error('Telnyx login timed out. Check your connection.')), 15000);
+          client.on('telnyx.ready', () => {
+            clearTimeout(timer);
+            resolve();
+          });
+          client.on('telnyx.error', (e) => {
+            clearTimeout(timer);
+            reject(new Error(friendlyTelnyxError(e)));
+          });
+          void client.connect();
+        });
+
+        client.off('telnyx.error');
+        client.on('telnyx.error', (e) => set({ error: friendlyTelnyxError(e) }));
+        // A dropped socket can't place calls; forget the client so the next call
+        // logs in again instead of dialling on a dead connection.
+        client.on('telnyx.socket.close', () => {
+          if (get().telnyx === client && !get().telnyxCall) set({ telnyx: null, telnyxLoginAt: null });
+        });
+
+        // Call lifecycle — bound once for the life of the client.
+        client.on('telnyx.notification', (n) => {
+          if (n.type !== 'callUpdate' || !n.call) return;
+          const call = n.call;
+          const current = get().telnyxCall;
+          if (!current || call.id !== current.id) return; // not our outbound call
+          switch (call.state) {
+            case 'new':
+            case 'requesting':
+            case 'trying':
+              set({ phase: 'connecting' });
+              break;
+            case 'ringing':
+            case 'early':
+              set({ phase: 'ringing' });
+              break;
+            case 'active':
+              if (get().phase !== 'in_call') set({ phase: 'in_call', startedAt: Date.now() });
+              break;
+            case 'hangup':
+            case 'destroy': {
+              if (get().phase === 'idle' || get().phase === 'ended') return;
+              const { startedAt, leadId, leadName, phone: ph, phoneSlot } = get();
+              const durationSec = startedAt ? Math.max(0, Math.round((Date.now() - startedAt) / 1000)) : 0;
+              const ids = call.telnyxIDs;
+              const reason = startedAt ? null : telnyxEndReason(call);
+              set({
+                phase: 'ended',
+                telnyxCall: null,
+                startedAt: null,
+                muted: false,
+                ...(reason ? { error: reason } : {}),
+                pending: {
+                  leadId,
+                  leadName,
+                  phone: ph,
+                  phoneSlot,
+                  durationSec,
+                  provider: 'telnyx',
+                  mode: 'softphone',
+                  telnyxCallLegId: ids?.telnyxLegId || undefined,
+                  telnyxCallSessionId: ids?.telnyxSessionId || undefined,
+                  ...(reason ? { resultReason: reason } : {}),
+                },
+              });
+              // Never connected and the SDK gave no reason → ask the webhook-fed status.
+              if (!reason && durationSec === 0 && ids?.telnyxLegId) void get().pollDialStatus(ids.telnyxLegId);
+              break;
+            }
+          }
+        });
+
+        set({
+          telnyx: client,
+          telnyxCallerId: login.callerId,
+          telnyxLoginAt: Date.now(),
+          ready: true,
+          initializing: false,
+        });
+      } catch (e) {
+        set({
+          initializing: false,
+          ready: false,
+          error: e instanceof Error ? e.message : 'Failed to initialize Telnyx calling',
         });
       }
       return;
@@ -384,6 +597,35 @@ export const useCallStore = create<CallState>((set, get) => ({
       return;
     }
 
+    // ── Telnyx softphone (WebRTC).
+    if (provider === 'telnyx') {
+      const client = get().telnyx;
+      if (!client) {
+        set({ error: get().error ?? 'Telnyx calling is unavailable' });
+        return;
+      }
+      await applyTelnyxSpeaker();
+      const micId = await resolveMicId();
+      set(baseCallState);
+      try {
+        // The caller number comes from the server (the admin-assigned number).
+        const call = client.newCall({
+          destinationNumber: to,
+          callerNumber: get().telnyxCallerId,
+          audio: micId ? { deviceId: { exact: micId } } : true,
+          video: false,
+        });
+        set({ telnyxCall: call });
+      } catch (e) {
+        set({
+          phase: 'idle',
+          telnyxCall: null,
+          error: e instanceof Error ? e.message : 'Could not place the call',
+        });
+      }
+      return;
+    }
+
     // ── Twilio softphone.
     const device = get().device;
     if (!device) {
@@ -446,12 +688,15 @@ export const useCallStore = create<CallState>((set, get) => ({
   // Twilio only transmits DTMF on a connected call — pressing a key while it's
   // still ringing would be silently dropped, so ignore it rather than pretend.
   sendDigit: (digit) => {
-    const { call, piopiy, provider, phase } = get();
+    const { call, piopiy, telnyxCall, provider, phase } = get();
     if (phase !== 'in_call') return;
     if (!/^[0-9*#]$/.test(digit)) return;
     if (provider === 'telecmi') {
       if (!piopiy) return;
       piopiy.sendDtmf(digit);
+    } else if (provider === 'telnyx') {
+      if (!telnyxCall) return;
+      telnyxCall.dtmf(digit);
     } else {
       if (!call) return;
       call.sendDigits(digit);
@@ -460,11 +705,15 @@ export const useCallStore = create<CallState>((set, get) => ({
   },
 
   toggleMute: () => {
-    const { call, piopiy, provider, muted } = get();
+    const { call, piopiy, telnyxCall, provider, muted } = get();
     if (provider === 'telecmi') {
       if (!piopiy) return;
       if (muted) piopiy.unMute();
       else piopiy.mute();
+    } else if (provider === 'telnyx') {
+      if (!telnyxCall) return;
+      if (muted) telnyxCall.unmuteAudio();
+      else telnyxCall.muteAudio();
     } else {
       if (!call) return;
       call.mute(!muted);
@@ -473,8 +722,9 @@ export const useCallStore = create<CallState>((set, get) => ({
   },
 
   hangup: () => {
-    const { call, piopiy, provider } = get();
+    const { call, piopiy, telnyxCall, provider } = get();
     if (provider === 'telecmi') piopiy?.terminate();
+    else if (provider === 'telnyx') void telnyxCall?.hangup();
     else call?.disconnect();
   },
 
@@ -483,7 +733,7 @@ export const useCallStore = create<CallState>((set, get) => ({
   pollDialStatus: async (callSid: string) => {
     for (let i = 0; i < 6; i++) {
       await new Promise((r) => setTimeout(r, 1000));
-      if (get().pending?.twilioCallSid !== callSid) return; // a new call started
+      if (pendingDialKey(get().pending) !== callSid) return; // a new call started
       let result: DialResult | null = null;
       try {
         result = await fetchDialStatus(callSid);
@@ -510,9 +760,13 @@ export const useCallStore = create<CallState>((set, get) => ({
     set({ pending: null, phase: 'idle', leadId: null, leadName: '', phone: '', error: null, digitsSent: '' }),
 
   destroy: () => {
-    const { device, call, piopiy } = get();
+    const { device, call, piopiy, telnyx, telnyxCall } = get();
     call?.disconnect();
     device?.destroy();
+    if (telnyx) {
+      telnyxCall?.hangup().catch(() => undefined);
+      telnyx.disconnect().catch(() => undefined);
+    }
     if (piopiy) {
       try {
         piopiy.terminate();
@@ -522,7 +776,17 @@ export const useCallStore = create<CallState>((set, get) => ({
         /* already torn down */
       }
     }
-    set({ device: null, piopiy: null, ready: false, call: null, phase: 'idle', pending: null });
+    set({
+      device: null,
+      piopiy: null,
+      telnyx: null,
+      telnyxCall: null,
+      telnyxLoginAt: null,
+      ready: false,
+      call: null,
+      phase: 'idle',
+      pending: null,
+    });
   },
 }));
 

@@ -10,6 +10,7 @@ import {
   setStatusSchema,
   setTargetSchema,
   setTelecmiAgentSchema,
+  setTelnyxNumberSchema,
   setTwilioNumberSchema,
   updateUserSchema,
 } from '../validators/userValidators.js';
@@ -28,6 +29,7 @@ router.patch('/:id/status', validate(setStatusSchema), ctrl.setUserStatus);
 router.patch('/:id/target', validate(setTargetSchema), ctrl.setUserTarget);
 router.patch('/:id/twilio-number', validate(setTwilioNumberSchema), ctrl.setUserTwilioNumber);
 router.patch('/:id/telecmi', validate(setTelecmiAgentSchema), ctrl.setUserTelecmi);
+router.patch('/:id/telnyx-number', validate(setTelnyxNumberSchema), ctrl.setUserTelnyxNumber);
 router.patch('/:id/reset-password', validate(resetPasswordSchema), ctrl.resetUserPassword);
 
 export default router;

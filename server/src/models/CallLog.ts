@@ -58,6 +58,10 @@ const callLogSchema = new Schema(
     // TeleCMI correlation: the SDK/CDR call id, and the click-to-call request id.
     telecmiCallId: { type: String, index: true },
     telecmiRequestId: { type: String, index: true },
+    // Telnyx correlation: the call leg/session ids the browser SDK reports. Its
+    // webhooks and recordings are keyed by these.
+    telnyxCallLegId: { type: String, index: true },
+    telnyxCallSessionId: { type: String, index: true },
     // TeleCMI recordings are referenced by file name and streamed through our proxy.
     recordingFile: { type: String },
     recordingUrl: { type: String },

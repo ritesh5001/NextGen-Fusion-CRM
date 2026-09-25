@@ -31,6 +31,9 @@ export const logCallSchema = z
     mode: z.enum(['softphone', 'click_to_call']).optional().default('softphone'),
     telecmiCallId: z.string().optional(),
     telecmiRequestId: z.string().optional(),
+    // Telnyx equivalents: the leg/session ids its webhooks and recordings use.
+    telnyxCallLegId: z.string().optional(),
+    telnyxCallSessionId: z.string().optional(),
     phone: z.enum(['phone1', 'phone2', 'phone3']).optional().default('phone1'),
     phoneNumber: z.string().optional().default(''),
   })
