@@ -14,6 +14,7 @@ import { Input, Label, Select } from '@/components/ui/Field';
 import { Badge, Card, Spinner, Toggle } from '@/components/ui/Misc';
 import { TelecmiPanel } from '@/features/integrations/TelecmiPanel';
 import { TelnyxPanel } from '@/features/integrations/TelnyxPanel';
+import { BolnaPanel } from '@/features/integrations/BolnaPanel';
 
 interface FormState {
   enabled: boolean;
@@ -343,6 +344,8 @@ export function IntegrationsPage() {
       <TelnyxPanel />
 
       <TelecmiPanel />
+
+      <BolnaPanel />
     </div>
   );
 }

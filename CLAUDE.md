@@ -165,6 +165,7 @@ Every tenant-scoped model (Lead, Task, CallLog, FollowUp, Notification, ImportBa
   /leads/:id`); invalid numbers are caught pre-dial with a prompt to fix.
 - **Follow-ups:** `GET /followups?scope=today|upcoming|overdue|all`, `PATCH /followups/:id/done`.
 - **Notifications:** `GET /notifications`, `PATCH /notifications/:id/read`, `PATCH /notifications/read-all`.
+- **AI calling (superadmin):** see *AI calling — Bolna voice agents* below.
 - **Reports:** `GET /reports/overview` (admin), `GET /reports/me` (telecaller).
 - **Integrations (superadmin):** `GET /integrations/twilio`, `PUT /integrations/twilio` — Twilio
   calling credentials/toggles (secrets masked on read); `GET /integrations/twilio/numbers` — the
@@ -456,6 +457,44 @@ Integration doc `key:'telnyx'`), never env vars.
   `colSpan` counted from the columns actually rendered (9 admin / 8 telecaller) — hardcoding it
   silently truncates the panel for whichever role has fewer columns.
 - Badge colour maps in `lib/constants.ts` carry explicit `dark:` pairs — the app is used in dark mode.
+
+## AI calling — Bolna voice agents (lead generation)
+
+Automated outbound calling with no human on our side: the superadmin gives the CRM a list of numbers,
+a **Bolna** voice agent calls each one, asks whether they want the service (yes / no / call back),
+and everyone who says yes is saved as a qualified **Lead**. Superadmin-only page `pages/AiCallingPage.tsx`
+(`/ai-calling`); setup in `features/integrations/BolnaPanel.tsx`.
+
+- **Config** (`Integration` doc `key:'bolna'`): `enabled, apiKey (secret), agentId, callerId (from-number,
+  ''=agent default), maxConcurrent, defaultCountryCode, publicServerUrl, webhookToken`.
+  `GET/PUT /integrations/bolna`, `POST /integrations/bolna/agents` (tests a key, lists agents).
+  The agent itself (prompt, voice, telephony) is built in the Bolna dashboard. The panel shows a sample
+  prompt (uses `{customer_name}` / `{service}`, which the CRM sends as `user_data`) and the
+  **extraction prompt** whose `interested: yes|no|callback` answer decides the outcome
+  (`bolnaService.parseInterest` reads it tolerantly — nested keys, booleans, free text).
+- **Models:** `AiCampaign` (`name, status draft|running|paused|completed|cancelled, pitch, agentId?,
+  fromNumber?, maxAttempts, retryDelayMin, assignTo?, saveAllContacts, workspace`) and `AiCall` (one
+  per number: `phoneNumber (E.164), lead?, status queued|dialing|in_progress|completed|no_answer|busy|
+  failed|cancelled, interest unknown|yes|no|callback, executionId, transcript, summary, extractedData,
+  recordingUrl, durationSec, attempts, processedAt`). Both workspace-scoped and cascade-deleted.
+- **Dispatcher** (`services/aiCallService.ts`, started in `server.ts`, ticks every 5s, all state in Mongo
+  so restarts resume): atomically claims queued calls of running campaigns up to `maxConcurrent`
+  in flight and `POST https://api.bolna.ai/call`s them; polls `GET /executions/:id` for in-flight calls
+  the webhook hasn't settled after 90s (so it works without a reachable webhook), gives up after 45 min;
+  marks campaigns with nothing left as completed. A 401/402/403 from Bolna pauses the campaign and notifies.
+- **Webhook:** `POST /ai-calls/webhook?token=…` (public). Bolna doesn't sign callbacks, so the URL carries
+  `webhookToken` (constant-time compare). `call-disconnected` is treated as still in progress — the
+  transcript/extraction/recording arrive with `completed`. No-answer/busy is re-queued until
+  `maxAttempts`.
+- **Into the CRM** (`saveOutcome`, idempotent via an atomic `processedAt` claim): matches an existing
+  contact by number (any phone slot) or creates one (`source:'ai_call'`, tag `ai-call`). yes → `interested`
+  + `qualified`; callback → `callback`; no → `not_interested`. Updates that slot's `phoneNOutcome`,
+  appends an "AI Agent" remark with the summary, assigns to `campaign.assignTo` if unassigned, and
+  notifies. no/unclear only create a contact when `saveAllContacts`. Never downgrades converted/DND.
+- **Campaign API** (`/ai-calls`, superadmin, workspace-scoped): `GET/POST /campaigns` (numbers and/or
+  existing contacts by `callStatus`), `GET /campaigns/:id`, `PATCH /campaigns/:id/status` (start|pause|
+  cancel), `DELETE /campaigns/:id`, `GET /calls`, `PATCH /calls/:id/interest` (admin corrects the verdict →
+  re-saves), `POST /calls/:id/retry`.
 
 ## Notes for future work
 

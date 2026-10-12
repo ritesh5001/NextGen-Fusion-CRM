@@ -9,6 +9,7 @@ import {
   Plug,
   Mic,
   Phone,
+  Bot,
   type LucideIcon,
 } from 'lucide-react';
 import { MAX_MOBILE_TABS } from '@/store/ui';
@@ -30,6 +31,7 @@ export const NAV: Record<Role, NavItem[]> = {
     { to: '/leads', label: 'Leads', icon: Star },
     { to: '/tasks', label: 'Tasks', icon: ListChecks },
     { to: '/dialer', label: 'Dialer', icon: Phone },
+    { to: '/ai-calling', label: 'AI Calling', shortLabel: 'AI Calls', icon: Bot },
     { to: '/recents', label: 'Recents', icon: PhoneCall },
     { to: '/device-test', label: 'Device Test', shortLabel: 'Devices', icon: Mic },
     { to: '/integrations', label: 'Integrations', shortLabel: 'Setup', icon: Plug },

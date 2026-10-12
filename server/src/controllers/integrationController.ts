@@ -13,6 +13,16 @@ import {
   listNumbers as listTelnyxNumbersFromApi,
   applyWebhookToConnection,
 } from '../services/telnyxService.js';
+import {
+  BOLNA_KEY,
+  BolnaApiError,
+  RECOMMENDED_EXTRACTION_PROMPT,
+  ensureWebhookToken,
+  hasAllCreds as bolnaHasAllCreds,
+  listAgents as listBolnaAgentsFromApi,
+  webhookUrlFor as bolnaWebhookUrlFor,
+} from '../services/bolnaService.js';
+import type { UpdateBolnaInput } from '../validators/aiCallValidators.js';
 import type { UpdateTwilioInput, UpdateTelecmiInput, UpdateTelnyxInput } from '../validators/integrationValidators.js';
 
 // Fields the admin form sends that are kept secret: blanks mean "leave unchanged",
@@ -245,5 +255,68 @@ export const applyTelnyxWebhook = asyncHandler(async (_req: Request, res: Respon
     res.json({ success: true, ...(await applyWebhookToConnection()) });
   } catch (e) {
     asApiError(e);
+  }
+});
+
+/** Client-safe view of the Bolna settings — the API key reduced to a "set" flag. */
+function sanitizeBolna(doc: IntegrationDoc | null) {
+  return {
+    enabled: doc?.enabled ?? false,
+    configured: bolnaHasAllCreds(doc),
+    agentId: doc?.agentId ?? '',
+    callerId: doc?.callerId ?? '',
+    maxConcurrent: doc?.maxConcurrent ?? 3,
+    defaultCountryCode: doc?.defaultCountryCode ?? '',
+    publicServerUrl: doc?.publicServerUrl ?? '',
+    apiKeySet: Boolean(doc?.apiKey),
+    // Paste into the agent's Analytics tab → Webhook URL in the Bolna dashboard.
+    webhookUrl: bolnaWebhookUrlFor(doc),
+    extractionPrompt: RECOMMENDED_EXTRACTION_PROMPT,
+  };
+}
+
+function asBolnaError(e: unknown): never {
+  if (e instanceof BolnaApiError) {
+    throw e.status >= 500 ? ApiError.serviceUnavailable(e.message) : ApiError.badRequest(e.message);
+  }
+  throw e;
+}
+
+// GET /integrations/bolna (superadmin)
+export const getBolnaIntegration = asyncHandler(async (_req: Request, res: Response) => {
+  const doc = (await Integration.findOne({ key: BOLNA_KEY })) ?? new Integration({ key: BOLNA_KEY });
+  // Mint the webhook token up front so the URL can be copied before the first save.
+  await ensureWebhookToken(doc);
+  res.json({ success: true, data: sanitizeBolna(doc) });
+});
+
+// PUT /integrations/bolna (superadmin) — blank `apiKey` keeps the stored key.
+export const updateBolnaIntegration = asyncHandler(async (req: Request, res: Response) => {
+  const body = req.body as UpdateBolnaInput;
+  const doc = (await Integration.findOne({ key: BOLNA_KEY })) ?? new Integration({ key: BOLNA_KEY });
+
+  const plainFields = ['enabled', 'agentId', 'callerId', 'maxConcurrent', 'defaultCountryCode', 'publicServerUrl'] as const;
+  for (const field of plainFields) {
+    if (body[field] !== undefined) doc.set(field, body[field]);
+  }
+  if (body.apiKey) doc.set('apiKey', body.apiKey);
+
+  if (doc.enabled && !bolnaHasAllCreds(doc)) {
+    throw ApiError.badRequest('Add the API key and choose an agent before enabling Bolna.');
+  }
+
+  doc.updatedBy = req.user!.id as unknown as IntegrationDoc['updatedBy'];
+  await ensureWebhookToken(doc); // saves
+  await doc.save();
+  res.json({ success: true, data: sanitizeBolna(doc) });
+});
+
+// POST /integrations/bolna/agents (superadmin) — tests a typed or stored key and
+// lists the account's agents for the picker.
+export const listBolnaAgents = asyncHandler(async (req: Request, res: Response) => {
+  try {
+    res.json({ success: true, data: await listBolnaAgentsFromApi(req.body?.apiKey) });
+  } catch (e) {
+    asBolnaError(e);
   }
 });

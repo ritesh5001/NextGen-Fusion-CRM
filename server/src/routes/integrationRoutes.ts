@@ -9,6 +9,7 @@ import {
   updateTelnyxSchema,
   telnyxTestSchema,
 } from '../validators/integrationValidators.js';
+import { updateBolnaSchema, bolnaTestSchema } from '../validators/aiCallValidators.js';
 
 const router = Router();
 
@@ -28,5 +29,9 @@ router.put('/telnyx', validate(updateTelnyxSchema), ctrl.updateTelnyxIntegration
 router.post('/telnyx/connections', validate(telnyxTestSchema), ctrl.listTelnyxConnections);
 router.get('/telnyx/numbers', ctrl.listTelnyxNumbers);
 router.post('/telnyx/apply-webhook', ctrl.applyTelnyxWebhook);
+
+router.get('/bolna', ctrl.getBolnaIntegration);
+router.put('/bolna', validate(updateBolnaSchema), ctrl.updateBolnaIntegration);
+router.post('/bolna/agents', validate(bolnaTestSchema), ctrl.listBolnaAgents);
 
 export default router;

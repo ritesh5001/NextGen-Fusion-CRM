@@ -1,7 +1,7 @@
 import { Schema, model, Types, type InferSchemaType, type HydratedDocument } from 'mongoose';
 
 // Singleton settings document(s) for third-party integrations, keyed by `key`.
-// One doc per provider: 'twilio', 'telecmi', 'telnyx'. Credentials live here (managed from the admin panel)
+// One doc per provider: 'twilio', 'telecmi', 'telnyx', 'bolna'. Credentials live here (managed from the admin panel)
 // instead of env vars. Secrets are never returned to the client raw — see
 // `integrationController.sanitizeTwilio`.
 const integrationSchema = new Schema(
@@ -32,6 +32,14 @@ const integrationSchema = new Schema(
     apiKey: { type: String, default: '' }, // secret
     connectionId: { type: String, default: '' },
     publicKey: { type: String, default: '' },
+    // Bolna AI voice agent — used when `key` is 'bolna'. `apiKey` above is the
+    // Bolna API key and `callerId` the number the agent dials from ('' = the
+    // account default). `webhookToken` is a random secret baked into the webhook
+    // URL, because Bolna doesn't sign its callbacks.
+    agentId: { type: String, default: '' },
+    webhookToken: { type: String, default: '' },
+    // How many AI calls may be in flight at once across all campaigns.
+    maxConcurrent: { type: Number, default: 3 },
     // Call behaviour.
     recordCalls: { type: Boolean, default: true },
     // Prepended to dialled numbers that have no country code (e.g. '+91').

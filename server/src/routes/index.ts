@@ -9,6 +9,7 @@ import notificationRoutes from './notificationRoutes.js';
 import reportRoutes from './reportRoutes.js';
 import integrationRoutes from './integrationRoutes.js';
 import workspaceRoutes from './workspaceRoutes.js';
+import aiCallRoutes from './aiCallRoutes.js';
 
 const router = Router();
 
@@ -30,5 +31,6 @@ router.use('/followups', followUpRoutes);
 router.use('/notifications', notificationRoutes);
 router.use('/reports', reportRoutes);
 router.use('/integrations', integrationRoutes);
+router.use('/ai-calls', aiCallRoutes);
 
 export default router;

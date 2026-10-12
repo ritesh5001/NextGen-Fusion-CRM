@@ -8,6 +8,8 @@ import { Task } from '../models/Task.js';
 import { CallLog } from '../models/CallLog.js';
 import { FollowUp } from '../models/FollowUp.js';
 import { Notification } from '../models/Notification.js';
+import { AiCampaign } from '../models/AiCampaign.js';
+import { AiCall } from '../models/AiCall.js';
 import { ImportBatch } from '../models/ImportBatch.js';
 import type { CreateWorkspaceInput, UpdateWorkspaceInput } from '../validators/workspaceValidators.js';
 
@@ -52,6 +54,8 @@ export const deleteWorkspace = asyncHandler(async (req: Request, res: Response) 
     FollowUp.deleteMany({ workspace: wsId }),
     Notification.deleteMany({ workspace: wsId }),
     ImportBatch.deleteMany({ workspace: wsId }),
+    AiCampaign.deleteMany({ workspace: wsId }),
+    AiCall.deleteMany({ workspace: wsId }),
   ]);
   await workspace.deleteOne();
 

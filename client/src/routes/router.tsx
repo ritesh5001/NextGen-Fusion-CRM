@@ -12,6 +12,7 @@ import { IntegrationsPage } from '@/pages/IntegrationsPage';
 import { RecentsPage } from '@/pages/RecentsPage';
 import { DeviceTestPage } from '@/pages/DeviceTestPage';
 import { DialerPage } from '@/pages/DialerPage';
+import { AiCallingPage } from '@/pages/AiCallingPage';
 
 /** Redirects the legacy /tasks/:id notification link onto the Tasks page's detail view. */
 function TaskDeepLink() {
@@ -48,6 +49,14 @@ export function AppRoutes() {
         <Route path="/recents" element={<RecentsPage />} />
         <Route path="/dialer" element={<DialerPage />} />
         <Route path="/device-test" element={<DeviceTestPage />} />
+        <Route
+          path="/ai-calling"
+          element={
+            <RoleRoute role="superadmin">
+              <AiCallingPage />
+            </RoleRoute>
+          }
+        />
         <Route
           path="/integrations"
           element={

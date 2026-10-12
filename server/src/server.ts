@@ -2,6 +2,7 @@ import { createApp } from './app.js';
 import { connectDB } from './config/db.js';
 import { env } from './config/env.js';
 import { startKeepAlive } from './services/keepAlive.js';
+import { startAiCallDispatcher } from './services/aiCallService.js';
 
 async function bootstrap() {
   await connectDB();
@@ -9,6 +10,7 @@ async function bootstrap() {
   app.listen(env.port, () => {
     console.log(`🚀 API running at http://localhost:${env.port}/api/v1`);
     startKeepAlive();
+    startAiCallDispatcher();
   });
 }
 
